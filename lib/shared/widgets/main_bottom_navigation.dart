@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
 
 /// 메인 탭 식별자.
 ///
@@ -27,9 +26,12 @@ extension MainTabX on MainTab {
 
 /// 하단 메인 네비게이션.
 ///
-/// - 3 탭: 응모내역 / 홈 / 마이
-/// - 아이콘 28dp + 라벨 14sp
-/// - 어르신 친화: 큰 터치 영역, 선택 상태 명확 (코랄 + 굵은 라벨)
+/// 디자인:
+/// - 흰 배경 + 위쪽 부드러운 그림자 (날카로운 border 대신)
+/// - 선택된 탭의 아이콘 뒤에 코랄 알약(pill) 인디케이터 — width / 색상 애니메이션
+/// - 아이콘 교체는 [AnimatedSwitcher] 로 페이드, 라벨은 [AnimatedDefaultTextStyle] 로
+///   색·굵기 트윈
+/// - 어르신 친화: 큰 터치 영역, 굵은 활성 라벨, 라벨 항상 표시 (아이콘만으로 안 의존)
 class MainBottomNavigation extends StatelessWidget {
   const MainBottomNavigation({
     super.key,
@@ -43,32 +45,38 @@ class MainBottomNavigation extends StatelessWidget {
   static const List<_NavItem> _items = [
     _NavItem(
       icon: Icons.confirmation_number_outlined,
-      activeIcon: Icons.confirmation_number,
+      activeIcon: Icons.confirmation_number_rounded,
       label: '응모내역',
     ),
     _NavItem(
       icon: Icons.home_outlined,
-      activeIcon: Icons.home,
+      activeIcon: Icons.home_rounded,
       label: '홈',
     ),
     _NavItem(
-      icon: Icons.person_outline,
-      activeIcon: Icons.person,
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
       label: '마이',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        border: Border(top: BorderSide(color: AppColors.border)),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 72,
+          height: 76,
           child: Row(
             children: [
               for (var i = 0; i < _items.length; i++)
@@ -110,34 +118,64 @@ class _NavTab extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  static const _animDuration = Duration(milliseconds: 240);
+  static const _curve = Curves.easeOutCubic;
+
   @override
   Widget build(BuildContext context) {
-    final color =
-        selected ? AppColors.primary : AppColors.textSecondary;
+    final color = selected ? AppColors.primary : AppColors.textSecondary;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
+        splashColor: AppColors.primary.withValues(alpha: 0.10),
+        highlightColor: AppColors.primary.withValues(alpha: 0.05),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                selected ? item.activeIcon : item.icon,
-                size: 28,
-                color: color,
+              // 활성 알약 인디케이터.
+              AnimatedContainer(
+                duration: _animDuration,
+                curve: _curve,
+                width: selected ? 60 : 40,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? AppColors.primary.withValues(alpha: 0.14)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    transitionBuilder: (child, anim) => FadeTransition(
+                      opacity: anim,
+                      child: ScaleTransition(scale: anim, child: child),
+                    ),
+                    child: Icon(
+                      selected ? item.activeIcon : item.icon,
+                      key: ValueKey<bool>(selected),
+                      size: 26,
+                      color: color,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 4),
-              Text(
-                item.label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: 14,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              AnimatedDefaultTextStyle(
+                duration: _animDuration,
+                curve: _curve,
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 13,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   color: color,
                   height: 1.2,
                 ),
+                child: Text(item.label),
               ),
             ],
           ),

@@ -178,6 +178,7 @@ class _PendingTabState extends ConsumerState<_PendingTab>
             description: '마음에 드는 공연을 응모해보세요!',
             actionLabel: '공연 둘러보기',
             onAction: () => context.go(RouteNames.home),
+            animation: EmptyAnimation.bob,
           );
         }
         return RefreshIndicator(
@@ -234,6 +235,7 @@ class _WonTabState extends ConsumerState<_WonTab>
             emoji: '🍀',
             title: '아직 당첨된 공연이 없어요',
             description: '곧 좋은 소식이 있을 거예요!',
+            animation: EmptyAnimation.sway,
           );
         }
         return RefreshIndicator(
@@ -294,6 +296,7 @@ class _PastTabState extends ConsumerState<_PastTab>
           return const EmptyStateView(
             emoji: '📭',
             title: '지난 응모 내역이 없어요',
+            animation: EmptyAnimation.wiggle,
           );
         }
         return RefreshIndicator(

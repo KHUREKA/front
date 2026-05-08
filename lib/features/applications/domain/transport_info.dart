@@ -51,6 +51,7 @@ class TransportInfo {
     this.kakaoMapTransitUrl,
     this.kakaoMapCarUrl,
     this.kakaoMapWalkUrl,
+    this.tmapRoute,
   });
 
   final String address; // "서울 송파구 올림픽로 25"
@@ -65,5 +66,63 @@ class TransportInfo {
   final String? kakaoMapCarUrl;
   final String? kakaoMapWalkUrl;
 
+  /// Tmap 대중교통 경로 요약 — 백엔드가 가공해서 내려보낸 풍부한 데이터.
+  /// 있으면 헤더(총시간/환승/요금/도보) + 구간 타임라인 + 접근성 가이드를 표시.
+  final TmapTransitRouteSummary? tmapRoute;
+
   bool get hasMapUrl => kakaoMapUrl != null;
+  bool get hasTmapRoute => tmapRoute != null;
 }
+
+/// 도메인 단의 Tmap 경로 요약 — DTO 와 분리해 UI 가 의존하기 쉬운 모양.
+class TmapTransitRouteSummary {
+  const TmapTransitRouteSummary({
+    required this.totalTimeMinutes,
+    required this.transferCount,
+    required this.totalWalkMeters,
+    required this.paymentKrw,
+    this.summaryMessage,
+    this.firstStation,
+    this.lastStation,
+    this.segments = const [],
+    this.nearestStation,
+    this.recommendedExit,
+    this.caution,
+  });
+
+  final int totalTimeMinutes;
+  final int transferCount;
+  final int totalWalkMeters;
+  final int paymentKrw;
+  final String? summaryMessage;
+  final String? firstStation;
+  final String? lastStation;
+  final List<TransitSegment> segments;
+
+  // 접근성 가이드 (어르신 친화 — 어디서 내려서 어느 출구로 갈지).
+  final String? nearestStation;
+  final String? recommendedExit;
+  final String? caution;
+}
+
+/// 한 구간 — UI 가 한 줄로 표시할 단위.
+class TransitSegment {
+  const TransitSegment({
+    required this.mode,
+    required this.minutes,
+    this.startName,
+    this.endName,
+    this.displayName,
+    this.colorHex,
+    this.busNumbers = const [],
+  });
+
+  final String mode; // "버스" | "지하철" | "도보" 등
+  final int minutes;
+  final String? startName;
+  final String? endName;
+  final String? displayName;
+  final String? colorHex;
+  final List<String> busNumbers;
+}
+

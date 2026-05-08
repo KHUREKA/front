@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/location/location_service.dart';
+import '../../../core/maps/tmap_route_service.dart';
 import '../../../core/network/dio_client.dart';
 import '../domain/lottery_application.dart';
 import '../domain/lottery_status.dart';
@@ -50,5 +51,6 @@ final applicationsRepositoryProvider =
   return ApplicationsRepositoryImpl(
     dioClient: ref.watch(dioClientProvider),
     locationService: ref.watch(locationServiceProvider),
+    tmapRouteService: ref.watch(tmapRouteServiceProvider),
   );
 });

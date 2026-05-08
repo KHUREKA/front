@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../core/location/location_service.dart';
 import '../../../core/maps/kakao_map_links.dart';
+import '../../../core/maps/tmap_route_service.dart';
+import '../../../core/maps/tmap_transit_route_dto.dart';
 import '../../../core/network/dio_client.dart';
 import '../../home/domain/performance.dart';
 import '../../home/domain/performance_genre.dart';
@@ -25,10 +27,12 @@ class ApplicationsRepositoryImpl implements ApplicationsRepository {
   ApplicationsRepositoryImpl({
     required this.dioClient,
     required this.locationService,
+    required this.tmapRouteService,
   });
 
   final DioClient dioClient;
   final LocationService locationService;
+  final TmapRouteService tmapRouteService;
   Dio get _dio => dioClient.dio;
 
   /// 마지막 fetch 의 ticket 응답을 applicationId 로 인덱싱한 캐시.
@@ -152,12 +156,52 @@ class ApplicationsRepositoryImpl implements ApplicationsRepository {
       userLng: loc?.longitude,
     );
 
+    // 응답에 eventId 가 들어있으면 (백엔드가 추가한 후) Tmap 대중교통 경로도 같이 가져옴.
+    // 실패해도 카카오 URL 폴백은 유지되도록 try/catch.
+    TmapTransitRouteSummary? tmap;
+    final eventId = ticket.eventId;
+    if (eventId != null && eventId > 0) {
+      try {
+        final dto = await tmapRouteService.getRoute(eventId);
+        tmap = _toSummary(dto);
+      } catch (_) {
+        // 조용히 폴백 — 카카오 링크와 주소는 그대로 노출됨.
+      }
+    }
+
     return TransportInfo(
       address: ticket.venueAddress ?? '',
       kakaoMapUrl: links?.mapUrl,
       kakaoMapTransitUrl: links?.transitUrl,
       kakaoMapCarUrl: links?.carUrl,
       kakaoMapWalkUrl: links?.walkUrl,
+      tmapRoute: tmap,
+    );
+  }
+
+  TmapTransitRouteSummary _toSummary(TmapTransitRouteDto dto) {
+    return TmapTransitRouteSummary(
+      totalTimeMinutes: dto.totalTime,
+      transferCount: dto.transferCount,
+      totalWalkMeters: dto.totalWalk,
+      paymentKrw: dto.payment,
+      summaryMessage: dto.summaryMessage,
+      firstStation: dto.firstStation,
+      lastStation: dto.lastStation,
+      segments: dto.segments
+          .map((s) => TransitSegment(
+                mode: s.mode,
+                minutes: s.sectionTime,
+                startName: s.startName,
+                endName: s.endName,
+                displayName: s.displayName,
+                colorHex: s.color,
+                busNumbers: s.busNumbers,
+              ))
+          .toList(),
+      nearestStation: dto.accessibilityGuide?.nearestStation,
+      recommendedExit: dto.accessibilityGuide?.recommendedExit,
+      caution: dto.accessibilityGuide?.caution,
     );
   }
 

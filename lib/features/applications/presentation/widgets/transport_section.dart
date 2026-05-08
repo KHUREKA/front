@@ -143,30 +143,40 @@ class TransportSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // 교통수단 카드들
-        if (info.subway != null) ...[
-          _TransportRow(
-            emoji: '🚇',
-            title: '지하철',
-            description: info.subway!.displayLabel,
-          ),
-          const SizedBox(height: 10),
+        // Tmap 경로 요약 (있으면) — 없으면 기존 subway/bus/taxi 폴백.
+        if (info.tmapRoute != null) ...[
+          _TmapRouteSummary(route: info.tmapRoute!),
+          const SizedBox(height: 12),
+          _SegmentsTimeline(segments: info.tmapRoute!.segments),
+          if (_hasAccessibility(info.tmapRoute!)) ...[
+            const SizedBox(height: 12),
+            _AccessibilityCard(route: info.tmapRoute!),
+          ],
+        ] else ...[
+          if (info.subway != null) ...[
+            _TransportRow(
+              emoji: '🚇',
+              title: '지하철',
+              description: info.subway!.displayLabel,
+            ),
+            const SizedBox(height: 10),
+          ],
+          if (info.bus != null) ...[
+            _TransportRow(
+              emoji: '🚌',
+              title: '버스',
+              description: info.bus!.displayLabel,
+            ),
+            const SizedBox(height: 10),
+          ],
+          if (info.taxi != null)
+            _TransportRow(
+              emoji: '🚕',
+              title: '택시',
+              description:
+                  '예상 요금 ${NumberFormat('#,###').format(info.taxi!.estimatedFareKrw)}원, 약 ${info.taxi!.estimatedMinutes}분',
+            ),
         ],
-        if (info.bus != null) ...[
-          _TransportRow(
-            emoji: '🚌',
-            title: '버스',
-            description: info.bus!.displayLabel,
-          ),
-          const SizedBox(height: 10),
-        ],
-        if (info.taxi != null)
-          _TransportRow(
-            emoji: '🚕',
-            title: '택시',
-            description:
-                '예상 요금 ${NumberFormat('#,###').format(info.taxi!.estimatedFareKrw)}원, 약 ${info.taxi!.estimatedMinutes}분',
-          ),
 
         const SizedBox(height: 16),
 
@@ -244,6 +254,322 @@ class _TransportRow extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// Tmap 경로 요약 (총시간/환승/도보/요금) + 한 줄 안내
+// ─────────────────────────────────────────
+bool _hasAccessibility(TmapTransitRouteSummary r) =>
+    (r.nearestStation != null && r.nearestStation!.isNotEmpty) ||
+    (r.recommendedExit != null && r.recommendedExit!.isNotEmpty) ||
+    (r.caution != null && r.caution!.isNotEmpty);
+
+class _TmapRouteSummary extends StatelessWidget {
+  const _TmapRouteSummary({required this.route});
+  final TmapTransitRouteSummary route;
+
+  @override
+  Widget build(BuildContext context) {
+    final priceFmt = NumberFormat('#,###');
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '약 ${route.totalTimeMinutes}분',
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  '소요',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if ((route.summaryMessage ?? '').isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              route.summaryMessage!,
+              style: AppTextStyles.bodyLarge.copyWith(
+                fontSize: 15,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _SummaryChip(
+                icon: Icons.swap_horiz_rounded,
+                label: '환승 ${route.transferCount}회',
+              ),
+              _SummaryChip(
+                icon: Icons.directions_walk_rounded,
+                label: '도보 ${route.totalWalkMeters}m',
+              ),
+              if (route.paymentKrw > 0)
+                _SummaryChip(
+                  icon: Icons.payments_outlined,
+                  label: '${priceFmt.format(route.paymentKrw)}원',
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryChip extends StatelessWidget {
+  const _SummaryChip({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: AppColors.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// 구간 타임라인 — 버스/지하철/도보 단계별 카드
+// ─────────────────────────────────────────
+class _SegmentsTimeline extends StatelessWidget {
+  const _SegmentsTimeline({required this.segments});
+  final List<TransitSegment> segments;
+
+  @override
+  Widget build(BuildContext context) {
+    if (segments.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (int i = 0; i < segments.length; i++) ...[
+          _SegmentRow(segment: segments[i]),
+          if (i < segments.length - 1) const _SegmentConnector(),
+        ],
+      ],
+    );
+  }
+}
+
+class _SegmentRow extends StatelessWidget {
+  const _SegmentRow({required this.segment});
+  final TransitSegment segment;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseHex(segment.colorHex) ?? AppColors.textSecondary;
+    final emoji = _emojiFor(segment.mode);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 모드 컬러 인디케이터
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            alignment: Alignment.center,
+            child: Text(emoji, style: const TextStyle(fontSize: 20, height: 1)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      segment.displayName ?? segment.mode,
+                      style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        height: 1.3,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${segment.minutes}분',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                if (segment.startName != null && segment.endName != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${segment.startName} → ${segment.endName}',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _emojiFor(String mode) {
+    switch (mode) {
+      case '버스':
+        return '🚌';
+      case '지하철':
+        return '🚇';
+      case '도보':
+        return '🚶';
+      default:
+        return '🧭';
+    }
+  }
+
+  Color? _parseHex(String? hex) {
+    if (hex == null) return null;
+    var h = hex.replaceFirst('#', '');
+    if (h.length == 6) h = 'FF$h';
+    final v = int.tryParse(h, radix: 16);
+    return v == null ? null : Color(v);
+  }
+}
+
+class _SegmentConnector extends StatelessWidget {
+  const _SegmentConnector();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(width: 24),
+          Icon(Icons.more_vert_rounded,
+              size: 18, color: AppColors.textTertiary),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────
+// 접근성 가이드 — 가까운 역/추천 출구/주의사항
+// ─────────────────────────────────────────
+class _AccessibilityCard extends StatelessWidget {
+  const _AccessibilityCard({required this.route});
+  final TmapTransitRouteSummary route;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8E1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFFFE082)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text('💡', style: TextStyle(fontSize: 18, height: 1)),
+              const SizedBox(width: 8),
+              Text(
+                '도착 안내',
+                style: AppTextStyles.bodyLarge.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (route.nearestStation != null && route.nearestStation!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                '가장 가까운 역: ${route.nearestStation}'
+                '${route.recommendedExit != null && route.recommendedExit!.isNotEmpty ? " · ${route.recommendedExit}번 출구" : ""}',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          if (route.caution != null && route.caution!.isNotEmpty)
+            Text(
+              route.caution!,
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+            ),
         ],
       ),
     );
