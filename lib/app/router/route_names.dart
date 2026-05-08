@@ -12,6 +12,12 @@ class RouteNames {
   static const String home = '/home';
   static const String lottery = '/lottery';
   static const String mypage = '/mypage';
+
+  /// 응모 상세 — 사용 예: `/lottery/app-001`
+  static String applicationDetailFor(String id) => '$lottery/$id';
+
+  /// 당첨 티켓 풀화면 — 사용 예: `/lottery/app-004/ticket`
+  static String applicationTicketFor(String id) => '$lottery/$id/ticket';
   static const String discovery = '/discovery';
   static const String discoveryResult = '/discovery/result';
 

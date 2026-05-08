@@ -9,10 +9,12 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_complete_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_flow_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/applications/presentation/screens/application_detail_screen.dart';
+import '../../features/applications/presentation/screens/applications_screen.dart';
+import '../../features/applications/presentation/screens/won_ticket_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_flow_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_result_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/lottery/presentation/screens/lottery_screen.dart';
 import '../../features/mypage/presentation/screens/mypage_screen.dart';
 import '../../features/seat/presentation/screens/seat_application_complete_screen.dart';
 import '../../features/seat/presentation/screens/seat_confirm_screen.dart';
@@ -137,6 +139,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // ─────────────────────────────────────
+      // 응모 상세 / 당첨 티켓 — 풀 스크린 (shell 밖)
+      // ─────────────────────────────────────
+      GoRoute(
+        path: '${RouteNames.lottery}/:applicationId',
+        name: 'applicationDetail',
+        builder: (context, state) => ApplicationDetailScreen(
+          applicationId: state.pathParameters['applicationId']!,
+        ),
+      ),
+      GoRoute(
+        path: '${RouteNames.lottery}/:applicationId/ticket',
+        name: 'applicationTicket',
+        builder: (context, state) => WonTicketScreen(
+          applicationId: state.pathParameters['applicationId']!,
+        ),
+      ),
+
+      // ─────────────────────────────────────
       // 메인 탭 셸 (응모내역 / 홈 / 마이)
       // 인덱스 순서는 MainTab enum 과 1:1 매칭
       // ─────────────────────────────────────
@@ -149,7 +169,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RouteNames.lottery,
                 name: 'lottery',
-                builder: (_, __) => const LotteryScreen(),
+                builder: (_, __) => const ApplicationsScreen(),
               ),
             ],
           ),
