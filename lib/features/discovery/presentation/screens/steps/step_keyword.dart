@@ -4,38 +4,60 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../providers/discovery_filter_provider.dart';
 import '../../widgets/question_text.dart';
+import '../../widgets/stagger_fade_slide.dart';
 
 /// Q2. 찾으시는 가수나 공연이 있나요? (선택)
 ///
 /// - 큰 입력창 (64dp 높이, 폰트 20sp) + 마이크 아이콘 (음성 입력 placeholder)
 /// - 하단: [건너뛰기] 텍스트 버튼 | [다음] 코랄 버튼
+/// - [isActive] 가 true 가 되는 순간 cascade 애니메이션 재생
 class StepKeyword extends ConsumerStatefulWidget {
   const StepKeyword({
     super.key,
     required this.onNext,
     required this.onSkip,
+    this.isActive = true,
   });
 
   final VoidCallback onNext;
   final VoidCallback onSkip;
+  final bool isActive;
 
   @override
   ConsumerState<StepKeyword> createState() => _StepKeywordState();
 }
 
-class _StepKeywordState extends ConsumerState<StepKeyword> {
+class _StepKeywordState extends ConsumerState<StepKeyword>
+    with SingleTickerProviderStateMixin {
   late final TextEditingController _controller;
+  late final AnimationController _ctrl;
 
   @override
   void initState() {
     super.initState();
     final initial = ref.read(discoveryFilterProvider).keyword ?? '';
     _controller = TextEditingController(text: initial);
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    if (widget.isActive) _ctrl.forward();
+  }
+
+  @override
+  void didUpdateWidget(StepKeyword old) {
+    super.didUpdateWidget(old);
+    if (widget.isActive && !old.isActive) {
+      _ctrl.forward(from: 0);
+    } else if (!widget.isActive && old.isActive) {
+      _ctrl.value = 0;
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -57,16 +79,20 @@ class _StepKeywordState extends ConsumerState<StepKeyword> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 16),
-          const QuestionText(
+          QuestionText(
             question: '찾으시는 가수나\n공연이 있나요?',
             helper: '예: 임영웅, 락페스티벌, 시카고 등',
+            animationController: _ctrl,
           ),
           const SizedBox(height: 32),
 
           // 입력창 (64dp, 폰트 20sp)
-          SizedBox(
-            height: 64,
-            child: TextField(
+          StaggerFadeSlide(
+            controller: _ctrl,
+            interval: const Interval(0.40, 0.85, curve: Curves.easeOutCubic),
+            child: SizedBox(
+              height: 64,
+              child: TextField(
               controller: _controller,
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => _commitAndNext(),

@@ -276,46 +276,76 @@ class _TmapRouteSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final priceFmt = NumberFormat('#,###');
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primary,
+            AppColors.primaryDark,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '약 ${route.totalTimeMinutes}분',
-                style: const TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
-                  height: 1.1,
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  shape: BoxShape.circle,
                 ),
+                alignment: Alignment.center,
+                child: const Icon(Icons.access_time_rounded,
+                    size: 20, color: Colors.white),
               ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  '소요',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+              const SizedBox(width: 10),
+              Text(
+                '예상 소요 시간',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.92),
+                  height: 1.2,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '약 ${_formatMinutes(route.totalTimeMinutes)}',
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 38,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              height: 1.1,
+              letterSpacing: -0.5,
+            ),
           ),
           if ((route.summaryMessage ?? '').isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
               route.summaryMessage!,
-              style: AppTextStyles.bodyLarge.copyWith(
-                fontSize: 15,
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.white.withValues(alpha: 0.92),
+                height: 1.4,
               ),
             ),
           ],
@@ -327,10 +357,6 @@ class _TmapRouteSummary extends StatelessWidget {
               _SummaryChip(
                 icon: Icons.swap_horiz_rounded,
                 label: '환승 ${route.transferCount}회',
-              ),
-              _SummaryChip(
-                icon: Icons.directions_walk_rounded,
-                label: '도보 ${route.totalWalkMeters}m',
               ),
               if (route.paymentKrw > 0)
                 _SummaryChip(
@@ -345,6 +371,15 @@ class _TmapRouteSummary extends StatelessWidget {
   }
 }
 
+/// `126` → `2시간 6분`, `60` → `1시간`, `45` → `45분`.
+String _formatMinutes(int total) {
+  if (total < 60) return '$total분';
+  final h = total ~/ 60;
+  final m = total % 60;
+  if (m == 0) return '$h시간';
+  return '$h시간 $m분';
+}
+
 class _SummaryChip extends StatelessWidget {
   const _SummaryChip({required this.icon, required this.label});
   final IconData icon;
@@ -357,6 +392,13 @@ class _SummaryChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -379,23 +421,102 @@ class _SummaryChip extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────
-// 구간 타임라인 — 버스/지하철/도보 단계별 카드
+// 구간 타임라인 — 버스/지하철/도보 단계별 카드 (staggered fade-slide)
 // ─────────────────────────────────────────
-class _SegmentsTimeline extends StatelessWidget {
+class _SegmentsTimeline extends StatefulWidget {
   const _SegmentsTimeline({required this.segments});
   final List<TransitSegment> segments;
 
   @override
+  State<_SegmentsTimeline> createState() => _SegmentsTimelineState();
+}
+
+class _SegmentsTimelineState extends State<_SegmentsTimeline>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  // 한 카드가 등장하는 데 걸리는 비율(0..1) + 카드 사이 시간차 비율.
+  static const _itemSpan = 0.55; // 각 항목이 0..1 중 차지하는 비율
+  static const _stagger = 0.16; // 카드 간 시작 시간 차이
+
+  @override
+  void initState() {
+    super.initState();
+    final n = widget.segments.length;
+    // 마지막 카드까지 충분히 들어갈 길이.
+    final ms = 350 + (n.clamp(1, 6) - 1) * 130;
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: ms),
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  /// `index` 번째 카드가 사용할 [Interval] 계산.
+  Interval _intervalFor(int index, int total) {
+    if (total <= 1) return const Interval(0.0, 1.0);
+    final maxStart = (1.0 - _itemSpan).clamp(0.0, 1.0);
+    final step = (total > 1)
+        ? (maxStart / (total - 1)).clamp(0.0, _stagger)
+        : 0.0;
+    final begin = (index * step).clamp(0.0, maxStart);
+    final end = (begin + _itemSpan).clamp(0.0, 1.0);
+    return Interval(begin, end, curve: Curves.easeOutCubic);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final segments = widget.segments;
     if (segments.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (int i = 0; i < segments.length; i++) ...[
-          _SegmentRow(segment: segments[i]),
-          if (i < segments.length - 1) const _SegmentConnector(),
+          _StaggeredItem(
+            controller: _ctrl,
+            interval: _intervalFor(i, segments.length),
+            child: _SegmentRow(segment: segments[i]),
+          ),
+          if (i < segments.length - 1)
+            _StaggeredItem(
+              controller: _ctrl,
+              interval: _intervalFor(i, segments.length),
+              child: const _SegmentConnector(),
+            ),
         ],
       ],
+    );
+  }
+}
+
+/// fade + 살짝 위로 슬라이드 — 자식 카드/커넥터에 공통 적용.
+class _StaggeredItem extends StatelessWidget {
+  const _StaggeredItem({
+    required this.controller,
+    required this.interval,
+    required this.child,
+  });
+  final AnimationController controller;
+  final Interval interval;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final curved = CurvedAnimation(parent: controller, curve: interval);
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.12),
+          end: Offset.zero,
+        ).animate(curved),
+        child: child,
+      ),
     );
   }
 }
@@ -417,7 +538,7 @@ class _SegmentRow extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // 모드 컬러 인디케이터
           Container(
@@ -435,27 +556,15 @@ class _SegmentRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      segment.displayName ?? segment.mode,
-                      style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${segment.minutes}분',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+                Text(
+                  segment.displayName ?? segment.mode,
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    height: 1.3,
+                  ),
                 ),
                 if (segment.startName != null && segment.endName != null) ...[
                   const SizedBox(height: 4),
@@ -467,6 +576,33 @@ class _SegmentRow extends StatelessWidget {
                     ),
                   ),
                 ],
+              ],
+            ),
+          ),
+          // 우측: 시간 칩 (코랄 톤 + 시계 아이콘)
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.access_time_rounded,
+                    size: 13, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Text(
+                  '${segment.minutes}분',
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
+                    height: 1.2,
+                  ),
+                ),
               ],
             ),
           ),

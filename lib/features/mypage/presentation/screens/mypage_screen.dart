@@ -76,9 +76,25 @@ class _Body extends ConsumerWidget {
         // 헤더 라벨
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
-          child: Text(
-            '마이',
-            style: AppTextStyles.displayLarge.copyWith(fontSize: 26),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '나의 ',
+                style: AppTextStyles.displayLarge.copyWith(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                '도담',
+                style: AppTextStyles.displayLarge.copyWith(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
           ),
         ),
 

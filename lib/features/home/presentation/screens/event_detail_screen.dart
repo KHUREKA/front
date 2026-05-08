@@ -691,72 +691,112 @@ class _TransitSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final priceFmt = NumberFormat('#,###');
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '대중교통으로 가는 길',
-            style: AppTextStyles.titleLarge.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '대중교통으로 가는 길',
+          style: AppTextStyles.titleLarge.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
           ),
-          const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primary, AppColors.primaryDark],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.25),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.access_time_rounded,
+                        size: 20, color: Colors.white),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    '예상 소요 시간',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.92),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
               Text(
-                '약 ${route.totalTime}분',
+                '약 ${_formatMinutes(route.totalTime)}',
                 style: const TextStyle(
                   fontFamily: 'Pretendard',
-                  fontSize: 26,
+                  fontSize: 38,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+                  color: Colors.white,
                   height: 1.1,
+                  letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(width: 8),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 3),
-                child: Text(
-                  '소요',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
+              if ((route.summaryMessage ?? '').isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  route.summaryMessage!,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white.withValues(alpha: 0.92),
+                    height: 1.4,
                   ),
                 ),
+              ],
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _Chip(label: '환승 ${route.transferCount}회'),
+                  if (route.payment > 0)
+                    _Chip(label: '${priceFmt.format(route.payment)}원'),
+                ],
               ),
             ],
           ),
-          if ((route.summaryMessage ?? '').isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              route.summaryMessage!,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _Chip(label: '환승 ${route.transferCount}회'),
-              _Chip(label: '도보 ${route.totalWalk}m'),
-              if (route.payment > 0)
-                _Chip(label: '${priceFmt.format(route.payment)}원'),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+}
+
+/// `126` → `2시간 6분`, `60` → `1시간`, `45` → `45분`.
+String _formatMinutes(int total) {
+  if (total < 60) return '$total분';
+  final h = total ~/ 60;
+  final m = total % 60;
+  if (m == 0) return '$h시간';
+  return '$h시간 $m분';
 }
 
 class _Chip extends StatelessWidget {
@@ -770,6 +810,13 @@ class _Chip extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         label,
