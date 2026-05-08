@@ -31,6 +31,12 @@ dependencies:
   # 이미지
   cached_network_image: ^3.3.1
 
+  # 스켈레톤(로딩) 효과
+  shimmer: ^3.0.0
+
+  # 결과 카드 슬라이드 인 애니메이션
+  flutter_staggered_animations: ^1.1.1
+
   # 한국어/날짜 포맷
   intl: ^0.20.2
 

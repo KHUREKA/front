@@ -9,10 +9,13 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_complete_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_flow_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
-import '../../features/home/presentation/screens/discovery_screen.dart';
+import '../../features/discovery/presentation/screens/discovery_flow_screen.dart';
+import '../../features/discovery/presentation/screens/discovery_result_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/lottery/presentation/screens/lottery_screen.dart';
 import '../../features/mypage/presentation/screens/mypage_screen.dart';
+import '../../features/seat/presentation/screens/seat_placeholder_screen.dart';
+import 'main_tab_shell.dart';
 import 'route_names.dart';
 
 /// authProvider 변화를 GoRouter로 전달하기 위한 가벼운 Listenable.
@@ -22,17 +25,20 @@ class _RouterRefresh extends ChangeNotifier {
 
 /// Riverpod 기반 GoRouter.
 ///
+/// 구조:
+/// - 탭 외 전체화면: /splash, /onboarding, /login, /signup, /signup-complete, /discovery
+/// - `StatefulShellRoute.indexedStack` 으로 묶인 메인 탭 3개 (/lottery, /home, /mypage)
+///   → 탭 전환해도 각 브랜치 스크롤/스테이트 보존
+///
 /// 인증 가드:
 /// - `/splash` 는 항상 통과 (자체 분기)
-/// - `bootstrap` 진행 중이면 `/splash` 로 (다른 화면 깜빡임 방지)
+/// - `bootstrap` 진행 중이면 `/splash`
 /// - 비로그인 + 보호 라우트 → `/login`
-/// - 로그인 + 인증 플로우(`/login`, `/signup`, `/onboarding`) → `/home`
-/// - `/signup-complete` 는 인증된 사용자 전용 (자체 타이머로 `/home` 이동)
+/// - 로그인 + 인증 플로우 → `/home`
 final goRouterProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh();
   ref.onDispose(refresh.dispose);
 
-  // authProvider 변화 시 라우터 redirect 재평가.
   ref.listen<AuthState>(authProvider, (_, __) => refresh.refresh());
 
   return GoRouter(
@@ -62,6 +68,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      // ─────────────────────────────────────
+      // 탭 외 전체화면 라우트
+      // ─────────────────────────────────────
       GoRoute(
         path: RouteNames.splash,
         name: 'splash',
@@ -88,24 +97,59 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const SignupCompleteScreen(),
       ),
       GoRoute(
-        path: RouteNames.home,
-        name: 'home',
-        builder: (_, __) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: RouteNames.lottery,
-        name: 'lottery',
-        builder: (_, __) => const LotteryScreen(),
-      ),
-      GoRoute(
-        path: RouteNames.mypage,
-        name: 'mypage',
-        builder: (_, __) => const MyPageScreen(),
-      ),
-      GoRoute(
         path: RouteNames.discovery,
         name: 'discovery',
-        builder: (_, __) => const DiscoveryScreen(),
+        builder: (_, __) => const DiscoveryFlowScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.discoveryResult,
+        name: 'discoveryResult',
+        builder: (_, __) => const DiscoveryResultScreen(),
+      ),
+      GoRoute(
+        path: '${RouteNames.seat}/:performanceId',
+        name: 'seat',
+        builder: (context, state) => SeatPlaceholderScreen(
+          performanceId: state.pathParameters['performanceId']!,
+        ),
+      ),
+
+      // ─────────────────────────────────────
+      // 메인 탭 셸 (응모내역 / 홈 / 마이)
+      // 인덱스 순서는 MainTab enum 과 1:1 매칭
+      // ─────────────────────────────────────
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainTabShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.lottery,
+                name: 'lottery',
+                builder: (_, __) => const LotteryScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.home,
+                name: 'home',
+                builder: (_, __) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.mypage,
+                name: 'mypage',
+                builder: (_, __) => const MyPageScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
