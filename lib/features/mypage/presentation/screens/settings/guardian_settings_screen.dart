@@ -95,28 +95,39 @@ class _Body extends ConsumerWidget {
           '연결된 보호자에게 더 이상 알림이 가지 않아요.',
           style: TextStyle(fontSize: 16, height: 1.5),
         ),
-        // 위계 분리: 파괴적은 빨강 텍스트, 안전(아니요)은 채워진 버튼.
+        // 위계 분리 + 한 줄 강제.
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('네, 끊을게요',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                style:
+                    TextButton.styleFrom(foregroundColor: AppColors.error),
+                child: const Text('네, 끊을게요',
+                    style: TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w600)),
               ),
-            ),
-            child: const Text('아니요',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+              const SizedBox(width: 4),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  minimumSize: const Size(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text('아니요',
+                    style: TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w700)),
+              ),
+            ],
           ),
         ],
       ),

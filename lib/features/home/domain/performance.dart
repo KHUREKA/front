@@ -26,6 +26,12 @@ class Performance with _$Performance {
     required int priceMax,
     @Default(false) bool isLotteryOpen,
     DateTime? lotteryDeadline,
+    // 이벤트 상세(`GET /events/{id}`) 응답에서만 채워지는 부가 정보.
+    // 카드용 응답(`/events/home`, `/recommend`)에서는 비어있다.
+    String? venueAddress,
+    double? destinationLatitude,
+    double? destinationLongitude,
+    String? description,
   }) = _Performance;
 
   /// 기간 표시용. 같은 날이면 1줄, 다르면 시작 ~ 종료.

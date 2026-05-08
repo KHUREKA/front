@@ -75,9 +75,9 @@ class PerformanceRepositoryImpl implements PerformanceRepository {
       final response = await _dio.get<Map<String, dynamic>>(
         '/api/v1/events/$id',
       );
-      // `TicketEventResponse` 는 EventSummary 와 다른 모양(주소/위경도/설명 포함)이지만,
-      // Performance 도메인이 요구하는 핵심 필드(id/title/venueName/category/thumbnail)는 동일.
-      // EventSummaryDto 로 부분 디코딩해 재사용.
+      // `TicketEventResponse`: id, title, category, keyword, venueName, venueAddress,
+      // destinationLatitude/Longitude, description, thumbnailUrl.
+      // EventSummary 보다 풍부 — 이벤트 상세 화면이 사용.
       final data = response.data!;
       final summary = EventSummaryDto(
         id: (data['id'] as num).toInt(),
@@ -86,7 +86,13 @@ class PerformanceRepositoryImpl implements PerformanceRepository {
         category: data['category'] as String?,
         thumbnailUrl: data['thumbnailUrl'] as String?,
       );
-      return summary.toDomain();
+      final base = summary.toDomain();
+      return base.copyWith(
+        venueAddress: data['venueAddress'] as String?,
+        destinationLatitude: (data['destinationLatitude'] as num?)?.toDouble(),
+        destinationLongitude: (data['destinationLongitude'] as num?)?.toDouble(),
+        description: data['description'] as String?,
+      );
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
         throw const PerformanceException(

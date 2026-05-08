@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../mypage/presentation/providers/profile_provider.dart';
-import '../../domain/performance.dart';
 import '../widgets/hero_discovery_card.dart';
 import '../widgets/nearby_performance_list.dart';
 import '../widgets/recommended_performance_list.dart';
@@ -84,7 +85,8 @@ class HomeScreen extends ConsumerWidget {
             // 4. Nearby 가로 스크롤
             SliverToBoxAdapter(
               child: NearbyPerformanceList(
-                onTapPerformance: (p) => _showPlaceholderSnack(context, p),
+                onTapPerformance: (p) =>
+                    context.push(RouteNames.eventDetailFor(p.id)),
               ),
             ),
 
@@ -102,23 +104,14 @@ class HomeScreen extends ConsumerWidget {
 
             // 6. Recommended 세로 스택 (Sliver)
             RecommendedPerformanceSliverList(
-              onTapPerformance: (p) => _showPlaceholderSnack(context, p),
+              onTapPerformance: (p) =>
+                  context.push(RouteNames.eventDetailFor(p.id)),
             ),
 
             const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
           ],
         ),
       );
-  }
-
-  void _showPlaceholderSnack(BuildContext context, Performance p) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('"${p.title}" 상세 화면은 다음 단계에 만들 거예요'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 }
 

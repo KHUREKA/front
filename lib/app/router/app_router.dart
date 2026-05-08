@@ -14,6 +14,7 @@ import '../../features/applications/presentation/screens/applications_screen.dar
 import '../../features/applications/presentation/screens/won_ticket_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_flow_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_result_screen.dart';
+import '../../features/home/presentation/screens/event_detail_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/map/presentation/screens/map_webview_screen.dart';
 import '../../features/mypage/presentation/screens/account_info_screen.dart';
@@ -157,6 +158,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           final eventId = int.tryParse(raw ?? '') ?? 0;
           return MapWebViewScreen(eventId: eventId);
         },
+      ),
+
+      // ─────────────────────────────────────
+      // 공연 상세 — 홈/검색 카드 탭 시 진입 (shell 밖 풀 스크린)
+      // ─────────────────────────────────────
+      GoRoute(
+        path: '${RouteNames.event}/:eventId',
+        name: 'eventDetail',
+        builder: (context, state) => EventDetailScreen(
+          performanceId: state.pathParameters['eventId']!,
+        ),
       ),
 
       // ─────────────────────────────────────

@@ -72,38 +72,45 @@ class _DiscoveryFlowScreenState extends ConsumerState<DiscoveryFlowScreen> {
           '입력하신 내용이 사라져요.',
           style: TextStyle(fontSize: 16),
         ),
-        // 색이 비슷하면 헷갈리므로 형태로 위계 분리:
-        //   - 그만(파괴적) → 회색 TextButton (눈에 덜 띄게)
-        //   - 계속(안전, 권장) → 채워진 ElevatedButton (분명히 권장)
+        // 색이 비슷하면 헷갈리므로 형태로 위계 분리.
+        // OverflowBar 폭 초과로 세로로 떨어지지 않도록 단일 Row 로 강제.
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.textSecondary,
-            ),
-            child: const Text(
-              '그만할게요',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 12,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.textSecondary,
+                ),
+                child: const Text(
+                  '그만할게요',
+                  style:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              const SizedBox(width: 4),
+              ElevatedButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  minimumSize: const Size(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  '계속할게요',
+                  style:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                ),
               ),
-            ),
-            child: const Text(
-              '계속할게요',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-            ),
+            ],
           ),
         ],
       ),

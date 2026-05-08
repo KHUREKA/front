@@ -42,4 +42,9 @@ class RouteNames {
   /// 백엔드 `/map?id={eventId}` 페이지 WebView. 사용 예: `/map/12`.
   static const String map = '/map';
   static String mapFor(int eventId) => '$map/$eventId';
+
+  /// 공연 상세 화면. 홈/검색 카드 탭 시 진입. 사용 예: `/event/12`.
+  static const String event = '/event';
+  static String eventDetailFor(String performanceId) =>
+      '$event/$performanceId';
 }

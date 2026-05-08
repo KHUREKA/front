@@ -29,7 +29,13 @@ mixin _$Performance {
   int get priceMin => throw _privateConstructorUsedError;
   int get priceMax => throw _privateConstructorUsedError;
   bool get isLotteryOpen => throw _privateConstructorUsedError;
-  DateTime? get lotteryDeadline => throw _privateConstructorUsedError;
+  DateTime? get lotteryDeadline =>
+      throw _privateConstructorUsedError; // 이벤트 상세(`GET /events/{id}`) 응답에서만 채워지는 부가 정보.
+  // 카드용 응답(`/events/home`, `/recommend`)에서는 비어있다.
+  String? get venueAddress => throw _privateConstructorUsedError;
+  double? get destinationLatitude => throw _privateConstructorUsedError;
+  double? get destinationLongitude => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
 
   /// Create a copy of Performance
   /// with the given fields replaced by the non-null parameter values.
@@ -59,6 +65,10 @@ abstract class $PerformanceCopyWith<$Res> {
     int priceMax,
     bool isLotteryOpen,
     DateTime? lotteryDeadline,
+    String? venueAddress,
+    double? destinationLatitude,
+    double? destinationLongitude,
+    String? description,
   });
 }
 
@@ -90,6 +100,10 @@ class _$PerformanceCopyWithImpl<$Res, $Val extends Performance>
     Object? priceMax = null,
     Object? isLotteryOpen = null,
     Object? lotteryDeadline = freezed,
+    Object? venueAddress = freezed,
+    Object? destinationLatitude = freezed,
+    Object? destinationLongitude = freezed,
+    Object? description = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -145,6 +159,22 @@ class _$PerformanceCopyWithImpl<$Res, $Val extends Performance>
                 ? _value.lotteryDeadline
                 : lotteryDeadline // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            venueAddress: freezed == venueAddress
+                ? _value.venueAddress
+                : venueAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            destinationLatitude: freezed == destinationLatitude
+                ? _value.destinationLatitude
+                : destinationLatitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            destinationLongitude: freezed == destinationLongitude
+                ? _value.destinationLongitude
+                : destinationLongitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -174,6 +204,10 @@ abstract class _$$PerformanceImplCopyWith<$Res>
     int priceMax,
     bool isLotteryOpen,
     DateTime? lotteryDeadline,
+    String? venueAddress,
+    double? destinationLatitude,
+    double? destinationLongitude,
+    String? description,
   });
 }
 
@@ -204,6 +238,10 @@ class __$$PerformanceImplCopyWithImpl<$Res>
     Object? priceMax = null,
     Object? isLotteryOpen = null,
     Object? lotteryDeadline = freezed,
+    Object? venueAddress = freezed,
+    Object? destinationLatitude = freezed,
+    Object? destinationLongitude = freezed,
+    Object? description = freezed,
   }) {
     return _then(
       _$PerformanceImpl(
@@ -259,6 +297,22 @@ class __$$PerformanceImplCopyWithImpl<$Res>
             ? _value.lotteryDeadline
             : lotteryDeadline // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        venueAddress: freezed == venueAddress
+            ? _value.venueAddress
+            : venueAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        destinationLatitude: freezed == destinationLatitude
+            ? _value.destinationLatitude
+            : destinationLatitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        destinationLongitude: freezed == destinationLongitude
+            ? _value.destinationLongitude
+            : destinationLongitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -281,6 +335,10 @@ class _$PerformanceImpl extends _Performance {
     required this.priceMax,
     this.isLotteryOpen = false,
     this.lotteryDeadline,
+    this.venueAddress,
+    this.destinationLatitude,
+    this.destinationLongitude,
+    this.description,
   }) : super._();
 
   @override
@@ -310,10 +368,20 @@ class _$PerformanceImpl extends _Performance {
   final bool isLotteryOpen;
   @override
   final DateTime? lotteryDeadline;
+  // 이벤트 상세(`GET /events/{id}`) 응답에서만 채워지는 부가 정보.
+  // 카드용 응답(`/events/home`, `/recommend`)에서는 비어있다.
+  @override
+  final String? venueAddress;
+  @override
+  final double? destinationLatitude;
+  @override
+  final double? destinationLongitude;
+  @override
+  final String? description;
 
   @override
   String toString() {
-    return 'Performance(id: $id, title: $title, subtitle: $subtitle, posterImageUrl: $posterImageUrl, venue: $venue, startDate: $startDate, endDate: $endDate, distanceKm: $distanceKm, genre: $genre, priceMin: $priceMin, priceMax: $priceMax, isLotteryOpen: $isLotteryOpen, lotteryDeadline: $lotteryDeadline)';
+    return 'Performance(id: $id, title: $title, subtitle: $subtitle, posterImageUrl: $posterImageUrl, venue: $venue, startDate: $startDate, endDate: $endDate, distanceKm: $distanceKm, genre: $genre, priceMin: $priceMin, priceMax: $priceMax, isLotteryOpen: $isLotteryOpen, lotteryDeadline: $lotteryDeadline, venueAddress: $venueAddress, destinationLatitude: $destinationLatitude, destinationLongitude: $destinationLongitude, description: $description)';
   }
 
   @override
@@ -341,7 +409,15 @@ class _$PerformanceImpl extends _Performance {
             (identical(other.isLotteryOpen, isLotteryOpen) ||
                 other.isLotteryOpen == isLotteryOpen) &&
             (identical(other.lotteryDeadline, lotteryDeadline) ||
-                other.lotteryDeadline == lotteryDeadline));
+                other.lotteryDeadline == lotteryDeadline) &&
+            (identical(other.venueAddress, venueAddress) ||
+                other.venueAddress == venueAddress) &&
+            (identical(other.destinationLatitude, destinationLatitude) ||
+                other.destinationLatitude == destinationLatitude) &&
+            (identical(other.destinationLongitude, destinationLongitude) ||
+                other.destinationLongitude == destinationLongitude) &&
+            (identical(other.description, description) ||
+                other.description == description));
   }
 
   @override
@@ -360,6 +436,10 @@ class _$PerformanceImpl extends _Performance {
     priceMax,
     isLotteryOpen,
     lotteryDeadline,
+    venueAddress,
+    destinationLatitude,
+    destinationLongitude,
+    description,
   );
 
   /// Create a copy of Performance
@@ -386,6 +466,10 @@ abstract class _Performance extends Performance {
     required final int priceMax,
     final bool isLotteryOpen,
     final DateTime? lotteryDeadline,
+    final String? venueAddress,
+    final double? destinationLatitude,
+    final double? destinationLongitude,
+    final String? description,
   }) = _$PerformanceImpl;
   const _Performance._() : super._();
 
@@ -414,7 +498,16 @@ abstract class _Performance extends Performance {
   @override
   bool get isLotteryOpen;
   @override
-  DateTime? get lotteryDeadline;
+  DateTime? get lotteryDeadline; // 이벤트 상세(`GET /events/{id}`) 응답에서만 채워지는 부가 정보.
+  // 카드용 응답(`/events/home`, `/recommend`)에서는 비어있다.
+  @override
+  String? get venueAddress;
+  @override
+  double? get destinationLatitude;
+  @override
+  double? get destinationLongitude;
+  @override
+  String? get description;
 
   /// Create a copy of Performance
   /// with the given fields replaced by the non-null parameter values.
