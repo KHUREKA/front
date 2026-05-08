@@ -9,7 +9,10 @@ import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_complete_screen.dart';
 import '../../features/auth/presentation/screens/signup/signup_flow_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
-import '../../features/home/presentation/home_page.dart';
+import '../../features/home/presentation/screens/discovery_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/lottery/presentation/screens/lottery_screen.dart';
+import '../../features/mypage/presentation/screens/mypage_screen.dart';
 import 'route_names.dart';
 
 /// authProvider 변화를 GoRouter로 전달하기 위한 가벼운 Listenable.
@@ -87,7 +90,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RouteNames.home,
         name: 'home',
-        builder: (_, __) => const HomePage(),
+        builder: (_, __) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.lottery,
+        name: 'lottery',
+        builder: (_, __) => const LotteryScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypage,
+        name: 'mypage',
+        builder: (_, __) => const MyPageScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.discovery,
+        name: 'discovery',
+        builder: (_, __) => const DiscoveryScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

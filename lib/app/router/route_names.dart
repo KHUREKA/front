@@ -10,4 +10,7 @@ class RouteNames {
   static const String signup = '/signup';
   static const String signupComplete = '/signup-complete';
   static const String home = '/home';
+  static const String lottery = '/lottery';
+  static const String mypage = '/mypage';
+  static const String discovery = '/discovery';
 }
