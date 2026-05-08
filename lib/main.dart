@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
 import 'app/router/app_router.dart';
 import 'core/network/dio_client.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
+import 'features/mypage/data/mypage_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: _AppEntry()));
+  // 마이페이지 환경설정을 동기적으로 읽기 위해 미리 초기화 후 ProviderScope 에 주입.
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const _AppEntry(),
+    ),
+  );
 }
 
 /// 앱 진입점 위젯.

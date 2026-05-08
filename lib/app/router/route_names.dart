@@ -13,6 +13,15 @@ class RouteNames {
   static const String lottery = '/lottery';
   static const String mypage = '/mypage';
 
+  // 마이페이지 서브 라우트 (shell 밖, 풀 스크린).
+  static const String mypageTextSize = '/mypage/text-size';
+  static const String mypageGuardian = '/mypage/guardian';
+  static const String mypageInterests = '/mypage/interests';
+  static const String mypageChangePassword = '/mypage/change-password';
+  static const String mypageAccount = '/mypage/account';
+  static const String mypageWithdraw = '/mypage/withdraw';
+  static const String mypageNotifications = '/mypage/notifications';
+
   /// 응모 상세 — 사용 예: `/lottery/app-001`
   static String applicationDetailFor(String id) => '$lottery/$id';
 

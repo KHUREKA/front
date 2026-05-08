@@ -15,7 +15,14 @@ import '../../features/applications/presentation/screens/won_ticket_screen.dart'
 import '../../features/discovery/presentation/screens/discovery_flow_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_result_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/mypage/presentation/screens/account_info_screen.dart';
 import '../../features/mypage/presentation/screens/mypage_screen.dart';
+import '../../features/mypage/presentation/screens/settings/change_password_screen.dart';
+import '../../features/mypage/presentation/screens/settings/guardian_settings_screen.dart';
+import '../../features/mypage/presentation/screens/settings/interests_settings_screen.dart';
+import '../../features/mypage/presentation/screens/settings/notification_settings_screen.dart';
+import '../../features/mypage/presentation/screens/settings/text_size_settings_screen.dart';
+import '../../features/mypage/presentation/screens/withdraw_screen.dart';
 import '../../features/seat/presentation/screens/seat_application_complete_screen.dart';
 import '../../features/seat/presentation/screens/seat_confirm_screen.dart';
 import '../../features/seat/presentation/screens/seat_mode_screen.dart';
@@ -154,6 +161,45 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => WonTicketScreen(
           applicationId: state.pathParameters['applicationId']!,
         ),
+      ),
+
+      // ─────────────────────────────────────
+      // 마이페이지 서브 라우트 (shell 밖, 풀 스크린)
+      // ─────────────────────────────────────
+      GoRoute(
+        path: RouteNames.mypageTextSize,
+        name: 'mypageTextSize',
+        builder: (_, __) => const TextSizeSettingsScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageGuardian,
+        name: 'mypageGuardian',
+        builder: (_, __) => const GuardianSettingsScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageInterests,
+        name: 'mypageInterests',
+        builder: (_, __) => const InterestsSettingsScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageChangePassword,
+        name: 'mypageChangePassword',
+        builder: (_, __) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageAccount,
+        name: 'mypageAccount',
+        builder: (_, __) => const AccountInfoScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageWithdraw,
+        name: 'mypageWithdraw',
+        builder: (_, __) => const WithdrawScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.mypageNotifications,
+        name: 'mypageNotifications',
+        builder: (_, __) => const NotificationSettingsScreen(),
       ),
 
       // ─────────────────────────────────────
