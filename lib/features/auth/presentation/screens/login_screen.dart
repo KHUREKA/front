@@ -65,7 +65,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '두근티켓에 오신 것을 환영합니다',
+                    '도담에 오신 것을 환영합니다',
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodyLarge.copyWith(
                       color: AppColors.textSecondary,

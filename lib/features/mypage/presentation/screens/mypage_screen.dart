@@ -278,20 +278,34 @@ class _Body extends ConsumerWidget {
                   '다시 로그인하려면 이메일과 비밀번호가 필요해요.',
                   style: TextStyle(fontSize: 16, height: 1.5),
                 ),
+                // 위계 분리: 파괴적 옵션은 회색-빨강 텍스트, 안전 옵션은 채워진 버튼.
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(false),
-                    child: const Text('아니요',
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                    ),
+                    child: const Text('로그아웃',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         )),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.of(ctx).pop(true),
-                    style:
-                        TextButton.styleFrom(foregroundColor: AppColors.error),
-                    child: const Text('로그아웃',
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text('아니요',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,

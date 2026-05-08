@@ -38,4 +38,8 @@ class RouteNames {
   static String seatSwipeFor(String id) => '$seat/$id/swipe';
   static String seatConfirmFor(String id) => '$seat/$id/confirm';
   static String seatCompleteFor(String id) => '$seat/$id/complete';
+
+  /// 백엔드 `/map?id={eventId}` 페이지 WebView. 사용 예: `/map/12`.
+  static const String map = '/map';
+  static String mapFor(int eventId) => '$map/$eventId';
 }

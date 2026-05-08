@@ -72,20 +72,37 @@ class _DiscoveryFlowScreenState extends ConsumerState<DiscoveryFlowScreen> {
           '입력하신 내용이 사라져요.',
           style: TextStyle(fontSize: 16),
         ),
+        // 색이 비슷하면 헷갈리므로 형태로 위계 분리:
+        //   - 그만(파괴적) → 회색 TextButton (눈에 덜 띄게)
+        //   - 계속(안전, 권장) → 채워진 ElevatedButton (분명히 권장)
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text(
-              '계속할게요',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.textSecondary,
+            ),
             child: const Text(
               '그만할게요',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text(
+              '계속할게요',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
         ],

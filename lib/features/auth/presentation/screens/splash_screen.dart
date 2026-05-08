@@ -52,7 +52,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '두근티켓',
+                '도담',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 40,

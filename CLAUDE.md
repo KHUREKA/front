@@ -1,4 +1,4 @@
-# 두근티켓 (doogeun_ticket)
+# 도담 (doogeun_ticket)
 
 어르신(50~70대)을 위한 공연 티켓 자동 응모 Flutter 앱.
 큰 글씨, 큰 버튼, 친절한 한국어 문구가 핵심이다.

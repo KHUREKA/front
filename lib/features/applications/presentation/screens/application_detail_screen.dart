@@ -114,19 +114,30 @@ class _Body extends ConsumerWidget {
           '취소 후에는 되돌릴 수 없어요.',
           style: TextStyle(fontSize: 16, height: 1.5),
         ),
+        // 위계 분리: 파괴적(취소)은 빨강 텍스트, 권장(계속)은 채워진 버튼.
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text(
-              '계속 응모할게요',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text(
               '취소할게요',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text(
+              '계속 응모할게요',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),

@@ -227,6 +227,8 @@ mixin _$TicketResponseDto {
   String get applicationCode => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String? get paidAt => throw _privateConstructorUsedError;
+  int? get eventId =>
+      throw _privateConstructorUsedError; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
   String get eventTitle => throw _privateConstructorUsedError;
   String get venueName => throw _privateConstructorUsedError;
   String? get venueAddress => throw _privateConstructorUsedError;
@@ -259,6 +261,7 @@ abstract class $TicketResponseDtoCopyWith<$Res> {
     String applicationCode,
     String status,
     String? paidAt,
+    int? eventId,
     String eventTitle,
     String venueName,
     String? venueAddress,
@@ -290,6 +293,7 @@ class _$TicketResponseDtoCopyWithImpl<$Res, $Val extends TicketResponseDto>
     Object? applicationCode = null,
     Object? status = null,
     Object? paidAt = freezed,
+    Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
     Object? venueAddress = freezed,
@@ -318,6 +322,10 @@ class _$TicketResponseDtoCopyWithImpl<$Res, $Val extends TicketResponseDto>
                 ? _value.paidAt
                 : paidAt // ignore: cast_nullable_to_non_nullable
                       as String?,
+            eventId: freezed == eventId
+                ? _value.eventId
+                : eventId // ignore: cast_nullable_to_non_nullable
+                      as int?,
             eventTitle: null == eventTitle
                 ? _value.eventTitle
                 : eventTitle // ignore: cast_nullable_to_non_nullable
@@ -374,6 +382,7 @@ abstract class _$$TicketResponseDtoImplCopyWith<$Res>
     String applicationCode,
     String status,
     String? paidAt,
+    int? eventId,
     String eventTitle,
     String venueName,
     String? venueAddress,
@@ -404,6 +413,7 @@ class __$$TicketResponseDtoImplCopyWithImpl<$Res>
     Object? applicationCode = null,
     Object? status = null,
     Object? paidAt = freezed,
+    Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
     Object? venueAddress = freezed,
@@ -432,6 +442,10 @@ class __$$TicketResponseDtoImplCopyWithImpl<$Res>
             ? _value.paidAt
             : paidAt // ignore: cast_nullable_to_non_nullable
                   as String?,
+        eventId: freezed == eventId
+            ? _value.eventId
+            : eventId // ignore: cast_nullable_to_non_nullable
+                  as int?,
         eventTitle: null == eventTitle
             ? _value.eventTitle
             : eventTitle // ignore: cast_nullable_to_non_nullable
@@ -481,6 +495,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
     required this.applicationCode,
     required this.status,
     this.paidAt,
+    this.eventId,
     required this.eventTitle,
     required this.venueName,
     this.venueAddress,
@@ -503,6 +518,9 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
   final String status;
   @override
   final String? paidAt;
+  @override
+  final int? eventId;
+  // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
   @override
   final String eventTitle;
   @override
@@ -530,7 +548,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
 
   @override
   String toString() {
-    return 'TicketResponseDto(applicationId: $applicationId, applicationCode: $applicationCode, status: $status, paidAt: $paidAt, eventTitle: $eventTitle, venueName: $venueName, venueAddress: $venueAddress, destinationLatitude: $destinationLatitude, destinationLongitude: $destinationLongitude, startTime: $startTime, assignedZoneName: $assignedZoneName, zonePrice: $zonePrice, seats: $seats)';
+    return 'TicketResponseDto(applicationId: $applicationId, applicationCode: $applicationCode, status: $status, paidAt: $paidAt, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, venueAddress: $venueAddress, destinationLatitude: $destinationLatitude, destinationLongitude: $destinationLongitude, startTime: $startTime, assignedZoneName: $assignedZoneName, zonePrice: $zonePrice, seats: $seats)';
   }
 
   @override
@@ -544,6 +562,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
                 other.applicationCode == applicationCode) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.paidAt, paidAt) || other.paidAt == paidAt) &&
+            (identical(other.eventId, eventId) || other.eventId == eventId) &&
             (identical(other.eventTitle, eventTitle) ||
                 other.eventTitle == eventTitle) &&
             (identical(other.venueName, venueName) ||
@@ -571,6 +590,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
     applicationCode,
     status,
     paidAt,
+    eventId,
     eventTitle,
     venueName,
     venueAddress,
@@ -605,6 +625,7 @@ abstract class _TicketResponseDto implements TicketResponseDto {
     required final String applicationCode,
     required final String status,
     final String? paidAt,
+    final int? eventId,
     required final String eventTitle,
     required final String venueName,
     final String? venueAddress,
@@ -627,6 +648,8 @@ abstract class _TicketResponseDto implements TicketResponseDto {
   String get status;
   @override
   String? get paidAt;
+  @override
+  int? get eventId; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
   @override
   String get eventTitle;
   @override

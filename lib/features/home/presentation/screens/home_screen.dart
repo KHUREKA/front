@@ -55,7 +55,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const _LocationChip(location: '서울 강남구'),
+                    const _NotificationBell(),
                   ],
                 ),
               ),
@@ -122,42 +122,29 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-/// 우상단 위치 칩.
-class _LocationChip extends StatelessWidget {
-  const _LocationChip({required this.location});
-  final String location;
+/// 우상단 알림 종 — 향후 알림 센터 진입점.
+class _NotificationBell extends StatelessWidget {
+  const _NotificationBell();
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.surface,
+      shape: const CircleBorder(),
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        customBorder: const CircleBorder(),
         onTap: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('위치 변경은 준비 중이에요.')),
+            const SnackBar(content: Text('알림 기능은 준비 중이에요.')),
           );
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('📍', style: TextStyle(fontSize: 16, height: 1)),
-              const SizedBox(width: 4),
-              Text(
-                location,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
+        child: const SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(
+            Icons.notifications_none_rounded,
+            color: AppColors.textPrimary,
+            size: 24,
           ),
         ),
       ),

@@ -1,5 +1,5 @@
 name: doogeun_ticket
-description: "두근티켓 - 어르신을 위한 공연 티켓 자동 응모 앱"
+description: "도담 - 어르신을 위한 공연 티켓 자동 응모 앱"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -55,6 +55,12 @@ dependencies:
 
   # 카카오맵 등 외부 지도 앱 열기
   url_launcher: ^6.3.0
+
+  # 백엔드 네이버 지도 페이지(/map?id=...) 임베드용 WebView (Native 전용)
+  webview_flutter: ^4.10.0
+
+  # Flutter Web 에서 iframe 으로 같은 페이지 임베드
+  web: ^1.1.0
 
 dev_dependencies:
   flutter_test:

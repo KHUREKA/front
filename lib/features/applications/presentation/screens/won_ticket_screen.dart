@@ -139,8 +139,11 @@ class WonTicketScreen extends ConsumerWidget {
                     ),
                     data: (info) => TransportSection(
                       info: info,
+                      mapEventId: app.eventId,
                       onCopyAddress: () => _copyAddress(context, info),
                       onOpenMap: () => _openKakaoMap(context, info),
+                      onOpenMapPreview: () =>
+                          _openMapPreview(context, app.eventId),
                     ),
                   ),
                 ),
@@ -187,6 +190,19 @@ class WonTicketScreen extends ConsumerWidget {
 // ─────────────────────────────────────
 // 교통편 액션 핸들러
 // ─────────────────────────────────────
+void _openMapPreview(BuildContext context, int? eventId) {
+  if (eventId == null || eventId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('지도 정보가 곧 추가될 거예요.')),
+    );
+    return;
+  }
+  // 웹/네이티브 모두 풀스크린 진입.
+  // - Native: 인앱 WebView
+  // - Web: iframe + 하단 "새 탭에서 열기" 폴백 버튼
+  context.push(RouteNames.mapFor(eventId));
+}
+
 Future<void> _copyAddress(BuildContext context, TransportInfo info) async {
   if (info.address.isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
-/// 두근티켓 ThemeData.
+/// 도담 ThemeData.
 ///
 /// 어르신 친화 원칙:
 /// - 버튼 최소 높이 56dp

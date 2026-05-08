@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-/// 두근티켓 텍스트 스타일.
+/// 도담 텍스트 스타일.
 ///
 /// 어르신 가독성을 위해 모든 본문 18sp 이상, 줄간격(height) 1.5.
 /// UI 코드에서 TextStyle을 직접 만들지 말고 여기 토큰을 사용할 것.

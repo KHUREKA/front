@@ -74,6 +74,10 @@ class _SeatConfirmScreenState extends ConsumerState<SeatConfirmScreen> {
     final pref = ref.watch(seatPreferenceProvider);
     final asyncPerf =
         ref.watch(performanceByIdProvider(widget.performanceId));
+    // 백엔드 /events/{id} 상세에는 가격이 없어 priceMin/Max 가 0으로 내려옴.
+    // 그래서 좌석 zones 가 로드돼 있으면 거기서 실제 가격 범위를 끌어 쓴다.
+    final asyncSections =
+        ref.watch(sectionsProvider(widget.performanceId));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -88,20 +92,42 @@ class _SeatConfirmScreenState extends ConsumerState<SeatConfirmScreen> {
             onRetry: () =>
                 ref.invalidate(performanceByIdProvider(widget.performanceId)),
           ),
-          data: (perf) => _Content(
-            performance: perf,
-            preference: pref,
-            submitting: _submitting,
-            onIncrement: () =>
-                ref.read(seatPreferenceProvider.notifier).incrementCompanion(),
-            onDecrement: () =>
-                ref.read(seatPreferenceProvider.notifier).decrementCompanion(),
-            onSubmit: _submit,
-            onBack: _back,
-          ),
+          data: (perf) {
+            final sections = asyncSections.maybeWhen(
+              data: (s) => s,
+              orElse: () => const <Section>[],
+            );
+            final (priceMin, priceMax) = _resolvePriceRange(perf, sections);
+            return _Content(
+              performance: perf,
+              preference: pref,
+              priceMin: priceMin,
+              priceMax: priceMax,
+              submitting: _submitting,
+              onIncrement: () => ref
+                  .read(seatPreferenceProvider.notifier)
+                  .incrementCompanion(),
+              onDecrement: () => ref
+                  .read(seatPreferenceProvider.notifier)
+                  .decrementCompanion(),
+              onSubmit: _submit,
+              onBack: _back,
+            );
+          },
         ),
       ),
     );
+  }
+
+  /// zone 가격이 있으면 그 범위, 없으면 Performance 의 (대개 0인) 값.
+  (int, int) _resolvePriceRange(Performance perf, List<Section> sections) {
+    final prices =
+        sections.map((s) => s.price).where((p) => p > 0).toList();
+    if (prices.isNotEmpty) {
+      prices.sort();
+      return (prices.first, prices.last);
+    }
+    return (perf.priceMin, perf.priceMax);
   }
 }
 
@@ -109,6 +135,8 @@ class _Content extends StatelessWidget {
   const _Content({
     required this.performance,
     required this.preference,
+    required this.priceMin,
+    required this.priceMax,
     required this.submitting,
     required this.onIncrement,
     required this.onDecrement,
@@ -118,24 +146,19 @@ class _Content extends StatelessWidget {
 
   final Performance performance;
   final SeatPreference preference;
+  final int priceMin;
+  final int priceMax;
   final bool submitting;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final VoidCallback onSubmit;
   final VoidCallback onBack;
 
+  /// 응모 시점엔 어느 구역에 배정될지 모르므로, 공연 가격 범위의 평균으로
+  /// 단순 추정. 표시는 "약 N원" 으로 약속 — 실제 결제 금액이 아님을 명시.
   int get _estimatedPrice {
-    final companionCount = preference.companionCount;
-    if (preference.mode == SeatPickMode.ai ||
-        preference.rankedSectionIds.isEmpty) {
-      // AI 모드: 평균 가격 가정.
-      return ((performance.priceMin + performance.priceMax) ~/ 2) *
-          companionCount;
-    }
-    final firstId = preference.rankedSectionIds.first;
-    final base = MockSeatRepository.sectionById(firstId)?.price ??
-        performance.priceMin;
-    return base * companionCount;
+    final avg = (priceMin + priceMax) ~/ 2;
+    return avg * preference.companionCount;
   }
 
   @override
@@ -393,10 +416,10 @@ class _SummaryCard extends StatelessWidget {
                   )),
               const Spacer(),
               Text(
-                '${priceFmt.format(totalPrice)}원',
+                '약 ${priceFmt.format(totalPrice)}원',
                 style: const TextStyle(
                   fontFamily: 'Pretendard',
-                  fontSize: 32,
+                  fontSize: 28,
                   fontWeight: FontWeight.w700,
                   color: AppColors.primary,
                   height: 1.2,

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../map/presentation/widgets/map_inline_preview.dart';
 import '../../domain/transport_info.dart';
 
 /// 교통편 섹션.
@@ -17,11 +18,17 @@ class TransportSection extends StatelessWidget {
     required this.info,
     this.onCopyAddress,
     this.onOpenMap,
+    this.onOpenMapPreview,
+    this.mapEventId,
   });
 
   final TransportInfo info;
   final VoidCallback? onCopyAddress;
   final VoidCallback? onOpenMap;
+  // 지도 미리보기 탭 핸들러 — 백엔드 /map?id=eventId WebView 진입.
+  final VoidCallback? onOpenMapPreview;
+  // 백엔드 이벤트 id. 있으면 placeholder 자리에 실제 지도 인라인 임베드.
+  final int? mapEventId;
 
   @override
   Widget build(BuildContext context) {
@@ -36,58 +43,66 @@ class TransportSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // 지도 placeholder
+        // 지도 — eventId 가 있으면 실제 지도 인라인 임베드,
+        //        없으면 placeholder (탭 시 안내).
         AspectRatio(
           aspectRatio: 16 / 10,
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFE8EFF5),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Stack(
-              children: [
-                // 격자 패턴 느낌
-                Positioned.fill(
-                  child: CustomPaint(painter: _MapGridPainter()),
-                ),
-                Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.4),
-                              blurRadius: 18,
-                              spreadRadius: 2,
-                            ),
-                          ],
+          child: mapEventId != null && mapEventId! > 0
+              ? MapInlinePreview(
+                  eventId: mapEventId!,
+                  onTap: onOpenMapPreview,
+                )
+              : Material(
+                  color: const Color(0xFFE8EFF5),
+                  borderRadius: BorderRadius.circular(16),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: onOpenMapPreview,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: CustomPaint(painter: _MapGridPainter()),
                         ),
-                        child: const Icon(
-                          Icons.location_on_rounded,
-                          size: 32,
-                          color: Colors.white,
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.4),
+                                      blurRadius: 18,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.location_on_rounded,
+                                  size: 32,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                '지도 미리보기',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: const Color(0xFF6B7B8C),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '지도 미리보기',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF6B7B8C),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
         ),
 
         const SizedBox(height: 16),

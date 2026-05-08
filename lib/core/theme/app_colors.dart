@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// 두근티켓 디자인 시스템 색상.
+/// 도담 디자인 시스템 색상.
 ///
 /// 모든 색상은 이 파일에서만 정의한다. UI 코드에서 색상을 하드코딩하지 말 것.
 class AppColors {

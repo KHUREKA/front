@@ -219,6 +219,9 @@ class ApplicationsRepositoryImpl implements ApplicationsRepository {
 
     return LotteryApplication(
       id: app.id.toString(),
+      // ticket 응답에 eventId 가 있으면 우선, 없으면 application 응답 값.
+      // 둘 다 없으면 null — 지도 미리보기 비활성화.
+      eventId: ticket?.eventId ?? app.eventId,
       performance: performance,
       appliedAt: _parseIso(app.appliedAt),
       status: status,

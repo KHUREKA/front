@@ -15,6 +15,7 @@ import '../../features/applications/presentation/screens/won_ticket_screen.dart'
 import '../../features/discovery/presentation/screens/discovery_flow_screen.dart';
 import '../../features/discovery/presentation/screens/discovery_result_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/map/presentation/screens/map_webview_screen.dart';
 import '../../features/mypage/presentation/screens/account_info_screen.dart';
 import '../../features/mypage/presentation/screens/mypage_screen.dart';
 import '../../features/mypage/presentation/screens/settings/change_password_screen.dart';
@@ -143,6 +144,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '${RouteNames.seat}/:performanceId/complete',
         name: 'seatComplete',
         builder: (_, __) => const SeatApplicationCompleteScreen(),
+      ),
+
+      // ─────────────────────────────────────
+      // 지도 (백엔드 /map?id=eventId 페이지를 WebView 로 임베드)
+      // ─────────────────────────────────────
+      GoRoute(
+        path: '${RouteNames.map}/:eventId',
+        name: 'map',
+        builder: (context, state) {
+          final raw = state.pathParameters['eventId'];
+          final eventId = int.tryParse(raw ?? '') ?? 0;
+          return MapWebViewScreen(eventId: eventId);
+        },
       ),
 
       // ─────────────────────────────────────

@@ -11,6 +11,7 @@ import 'lottery_status.dart';
 class LotteryApplication {
   const LotteryApplication({
     required this.id,
+    this.eventId,
     required this.performance,
     required this.appliedAt,
     required this.status,
@@ -24,6 +25,10 @@ class LotteryApplication {
   });
 
   final String id;
+
+  /// 백엔드 이벤트 id. 응답에 포함되면 채워지고, 없으면 null.
+  /// 지도 페이지(`/map?id={eventId}`) 이동에 사용.
+  final int? eventId;
   final Performance performance;
   final DateTime appliedAt; // 응모한 시각
   final LotteryStatus status;

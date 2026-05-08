@@ -33,6 +33,8 @@ mixin _$ApplicationResponseDto {
   String? get lotteryResultAt => throw _privateConstructorUsedError;
   String? get paidAt => throw _privateConstructorUsedError;
   String? get applicationCode => throw _privateConstructorUsedError;
+  int? get eventId =>
+      throw _privateConstructorUsedError; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
   String get eventTitle => throw _privateConstructorUsedError;
   String get venueName => throw _privateConstructorUsedError;
   String get startTime =>
@@ -71,6 +73,7 @@ abstract class $ApplicationResponseDtoCopyWith<$Res> {
     String? lotteryResultAt,
     String? paidAt,
     String? applicationCode,
+    int? eventId,
     String eventTitle,
     String venueName,
     String startTime,
@@ -109,6 +112,7 @@ class _$ApplicationResponseDtoCopyWithImpl<
     Object? lotteryResultAt = freezed,
     Object? paidAt = freezed,
     Object? applicationCode = freezed,
+    Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
     Object? startTime = null,
@@ -153,6 +157,10 @@ class _$ApplicationResponseDtoCopyWithImpl<
                 ? _value.applicationCode
                 : applicationCode // ignore: cast_nullable_to_non_nullable
                       as String?,
+            eventId: freezed == eventId
+                ? _value.eventId
+                : eventId // ignore: cast_nullable_to_non_nullable
+                      as int?,
             eventTitle: null == eventTitle
                 ? _value.eventTitle
                 : eventTitle // ignore: cast_nullable_to_non_nullable
@@ -213,6 +221,7 @@ abstract class _$$ApplicationResponseDtoImplCopyWith<$Res>
     String? lotteryResultAt,
     String? paidAt,
     String? applicationCode,
+    int? eventId,
     String eventTitle,
     String venueName,
     String startTime,
@@ -248,6 +257,7 @@ class __$$ApplicationResponseDtoImplCopyWithImpl<$Res>
     Object? lotteryResultAt = freezed,
     Object? paidAt = freezed,
     Object? applicationCode = freezed,
+    Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
     Object? startTime = null,
@@ -292,6 +302,10 @@ class __$$ApplicationResponseDtoImplCopyWithImpl<$Res>
             ? _value.applicationCode
             : applicationCode // ignore: cast_nullable_to_non_nullable
                   as String?,
+        eventId: freezed == eventId
+            ? _value.eventId
+            : eventId // ignore: cast_nullable_to_non_nullable
+                  as int?,
         eventTitle: null == eventTitle
             ? _value.eventTitle
             : eventTitle // ignore: cast_nullable_to_non_nullable
@@ -345,6 +359,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
     this.lotteryResultAt,
     this.paidAt,
     this.applicationCode,
+    this.eventId,
     required this.eventTitle,
     required this.venueName,
     required this.startTime,
@@ -378,6 +393,9 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
   @override
   final String? applicationCode;
   @override
+  final int? eventId;
+  // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+  @override
   final String eventTitle;
   @override
   final String venueName;
@@ -400,7 +418,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
 
   @override
   String toString() {
-    return 'ApplicationResponseDto(id: $id, status: $status, requestedSeatCount: $requestedSeatCount, autoAssign: $autoAssign, appliedAt: $appliedAt, lotteryResultAt: $lotteryResultAt, paidAt: $paidAt, applicationCode: $applicationCode, eventTitle: $eventTitle, venueName: $venueName, startTime: $startTime, lotteryAt: $lotteryAt, priority1ZoneName: $priority1ZoneName, priority2ZoneName: $priority2ZoneName, priority3ZoneName: $priority3ZoneName, assignedZoneName: $assignedZoneName, mockPaymentStatus: $mockPaymentStatus)';
+    return 'ApplicationResponseDto(id: $id, status: $status, requestedSeatCount: $requestedSeatCount, autoAssign: $autoAssign, appliedAt: $appliedAt, lotteryResultAt: $lotteryResultAt, paidAt: $paidAt, applicationCode: $applicationCode, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, startTime: $startTime, lotteryAt: $lotteryAt, priority1ZoneName: $priority1ZoneName, priority2ZoneName: $priority2ZoneName, priority3ZoneName: $priority3ZoneName, assignedZoneName: $assignedZoneName, mockPaymentStatus: $mockPaymentStatus)';
   }
 
   @override
@@ -421,6 +439,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
             (identical(other.paidAt, paidAt) || other.paidAt == paidAt) &&
             (identical(other.applicationCode, applicationCode) ||
                 other.applicationCode == applicationCode) &&
+            (identical(other.eventId, eventId) || other.eventId == eventId) &&
             (identical(other.eventTitle, eventTitle) ||
                 other.eventTitle == eventTitle) &&
             (identical(other.venueName, venueName) ||
@@ -453,6 +472,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
     lotteryResultAt,
     paidAt,
     applicationCode,
+    eventId,
     eventTitle,
     venueName,
     startTime,
@@ -492,6 +512,7 @@ abstract class _ApplicationResponseDto implements ApplicationResponseDto {
     final String? lotteryResultAt,
     final String? paidAt,
     final String? applicationCode,
+    final int? eventId,
     required final String eventTitle,
     required final String venueName,
     required final String startTime,
@@ -522,6 +543,8 @@ abstract class _ApplicationResponseDto implements ApplicationResponseDto {
   String? get paidAt;
   @override
   String? get applicationCode;
+  @override
+  int? get eventId; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
   @override
   String get eventTitle;
   @override

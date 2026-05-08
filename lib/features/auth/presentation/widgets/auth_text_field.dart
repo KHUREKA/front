@@ -30,6 +30,7 @@ class AuthTextField extends StatelessWidget {
     this.autofocus = false,
     this.suffix,
     this.maxLength,
+    this.autofillHints,
   }) : assert(
           controller == null || initialValue == null,
           'controller와 initialValue는 동시에 줄 수 없어요',
@@ -58,6 +59,10 @@ class AuthTextField extends StatelessWidget {
   final Widget? suffix;
 
   final int? maxLength;
+
+  /// 시스템(Google/Apple/iCloud Keychain) 자동완성 힌트.
+  /// 예: `[AutofillHints.telephoneNumber]`, `[AutofillHints.email]`
+  final Iterable<String>? autofillHints;
 
   static const TextStyle _inputStyle = TextStyle(
     fontFamily: 'Pretendard',
@@ -103,6 +108,7 @@ class AuthTextField extends StatelessWidget {
           autofocus: autofocus,
           autocorrect: !obscureText,
           enableSuggestions: !obscureText,
+          autofillHints: autofillHints,
           style: _inputStyle,
           maxLength: maxLength,
           decoration: InputDecoration(

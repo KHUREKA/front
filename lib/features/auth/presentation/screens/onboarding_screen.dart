@@ -21,7 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _PageData(
       emoji: '🎫',
       title: '복잡한 티켓팅,\n이젠 어렵지 않아요',
-      subtitle: '두근티켓이 어려운 과정을\n대신 처리해드려요.',
+      subtitle: '도담이 어려운 과정을\n대신 처리해드려요.',
     ),
     _PageData(
       emoji: '🤖',

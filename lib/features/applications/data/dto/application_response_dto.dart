@@ -17,6 +17,7 @@ class ApplicationResponseDto with _$ApplicationResponseDto {
     String? lotteryResultAt,
     String? paidAt,
     String? applicationCode,
+    int? eventId, // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
     required String eventTitle,
     required String venueName,
     required String startTime, // ISO LocalDateTime
