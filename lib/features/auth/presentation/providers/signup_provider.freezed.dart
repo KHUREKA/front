@@ -31,6 +31,8 @@ mixin _$SignupFormState {
   bool get agreedPrivacy => throw _privateConstructorUsedError;
   bool get agreedMarketing => throw _privateConstructorUsedError; // Step 6
   List<String> get selectedGenres =>
+      throw _privateConstructorUsedError; // Step 7 — 좌석 선호 (백엔드 전송 대상)
+  SeatPreference? get seatPreference =>
       throw _privateConstructorUsedError; // 진행 상태
   int get currentStep => throw _privateConstructorUsedError;
   bool get isSubmitting => throw _privateConstructorUsedError;
@@ -64,6 +66,7 @@ abstract class $SignupFormStateCopyWith<$Res> {
     bool agreedPrivacy,
     bool agreedMarketing,
     List<String> selectedGenres,
+    SeatPreference? seatPreference,
     int currentStep,
     bool isSubmitting,
     String? submitError,
@@ -98,6 +101,7 @@ class _$SignupFormStateCopyWithImpl<$Res, $Val extends SignupFormState>
     Object? agreedPrivacy = null,
     Object? agreedMarketing = null,
     Object? selectedGenres = null,
+    Object? seatPreference = freezed,
     Object? currentStep = null,
     Object? isSubmitting = null,
     Object? submitError = freezed,
@@ -156,6 +160,10 @@ class _$SignupFormStateCopyWithImpl<$Res, $Val extends SignupFormState>
                 ? _value.selectedGenres
                 : selectedGenres // ignore: cast_nullable_to_non_nullable
                       as List<String>,
+            seatPreference: freezed == seatPreference
+                ? _value.seatPreference
+                : seatPreference // ignore: cast_nullable_to_non_nullable
+                      as SeatPreference?,
             currentStep: null == currentStep
                 ? _value.currentStep
                 : currentStep // ignore: cast_nullable_to_non_nullable
@@ -197,6 +205,7 @@ abstract class _$$SignupFormStateImplCopyWith<$Res>
     bool agreedPrivacy,
     bool agreedMarketing,
     List<String> selectedGenres,
+    SeatPreference? seatPreference,
     int currentStep,
     bool isSubmitting,
     String? submitError,
@@ -230,6 +239,7 @@ class __$$SignupFormStateImplCopyWithImpl<$Res>
     Object? agreedPrivacy = null,
     Object? agreedMarketing = null,
     Object? selectedGenres = null,
+    Object? seatPreference = freezed,
     Object? currentStep = null,
     Object? isSubmitting = null,
     Object? submitError = freezed,
@@ -288,6 +298,10 @@ class __$$SignupFormStateImplCopyWithImpl<$Res>
             ? _value._selectedGenres
             : selectedGenres // ignore: cast_nullable_to_non_nullable
                   as List<String>,
+        seatPreference: freezed == seatPreference
+            ? _value.seatPreference
+            : seatPreference // ignore: cast_nullable_to_non_nullable
+                  as SeatPreference?,
         currentStep: null == currentStep
             ? _value.currentStep
             : currentStep // ignore: cast_nullable_to_non_nullable
@@ -322,6 +336,7 @@ class _$SignupFormStateImpl extends _SignupFormState {
     this.agreedPrivacy = false,
     this.agreedMarketing = false,
     final List<String> selectedGenres = const <String>[],
+    this.seatPreference,
     this.currentStep = 0,
     this.isSubmitting = false,
     this.submitError,
@@ -380,6 +395,9 @@ class _$SignupFormStateImpl extends _SignupFormState {
     return EqualUnmodifiableListView(_selectedGenres);
   }
 
+  // Step 7 — 좌석 선호 (백엔드 전송 대상)
+  @override
+  final SeatPreference? seatPreference;
   // 진행 상태
   @override
   @JsonKey()
@@ -392,7 +410,7 @@ class _$SignupFormStateImpl extends _SignupFormState {
 
   @override
   String toString() {
-    return 'SignupFormState(name: $name, email: $email, emailCheckLoading: $emailCheckLoading, emailChecked: $emailChecked, emailDuplicate: $emailDuplicate, password: $password, passwordConfirm: $passwordConfirm, obscurePassword: $obscurePassword, phone: $phone, agreedTerms: $agreedTerms, agreedPrivacy: $agreedPrivacy, agreedMarketing: $agreedMarketing, selectedGenres: $selectedGenres, currentStep: $currentStep, isSubmitting: $isSubmitting, submitError: $submitError)';
+    return 'SignupFormState(name: $name, email: $email, emailCheckLoading: $emailCheckLoading, emailChecked: $emailChecked, emailDuplicate: $emailDuplicate, password: $password, passwordConfirm: $passwordConfirm, obscurePassword: $obscurePassword, phone: $phone, agreedTerms: $agreedTerms, agreedPrivacy: $agreedPrivacy, agreedMarketing: $agreedMarketing, selectedGenres: $selectedGenres, seatPreference: $seatPreference, currentStep: $currentStep, isSubmitting: $isSubmitting, submitError: $submitError)';
   }
 
   @override
@@ -425,6 +443,8 @@ class _$SignupFormStateImpl extends _SignupFormState {
               other._selectedGenres,
               _selectedGenres,
             ) &&
+            (identical(other.seatPreference, seatPreference) ||
+                other.seatPreference == seatPreference) &&
             (identical(other.currentStep, currentStep) ||
                 other.currentStep == currentStep) &&
             (identical(other.isSubmitting, isSubmitting) ||
@@ -449,6 +469,7 @@ class _$SignupFormStateImpl extends _SignupFormState {
     agreedPrivacy,
     agreedMarketing,
     const DeepCollectionEquality().hash(_selectedGenres),
+    seatPreference,
     currentStep,
     isSubmitting,
     submitError,
@@ -481,6 +502,7 @@ abstract class _SignupFormState extends SignupFormState {
     final bool agreedPrivacy,
     final bool agreedMarketing,
     final List<String> selectedGenres,
+    final SeatPreference? seatPreference,
     final int currentStep,
     final bool isSubmitting,
     final String? submitError,
@@ -513,7 +535,9 @@ abstract class _SignupFormState extends SignupFormState {
   @override
   bool get agreedMarketing; // Step 6
   @override
-  List<String> get selectedGenres; // 진행 상태
+  List<String> get selectedGenres; // Step 7 — 좌석 선호 (백엔드 전송 대상)
+  @override
+  SeatPreference? get seatPreference; // 진행 상태
   @override
   int get currentStep;
   @override

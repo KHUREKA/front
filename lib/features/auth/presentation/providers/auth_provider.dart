@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../../../core/storage/secure_storage.dart';
 import '../../data/auth_repository.dart';
@@ -54,12 +55,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// 로그인 성공 후 호출.
+  ///
+  /// 백엔드 응답에는 user 정보가 없으므로 JWT 클레임에서 직접 만든다.
+  /// 토큰 클레임: { sub: email, username, userId, auth }
   Future<void> applyAuthResponse(AuthResponse response) async {
-    await _storage.saveTokens(
-      accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
-    );
-    state = state.copyWith(user: response.user, isBootstrapping: false);
+    await _storage.saveTokens(accessToken: response.accessToken);
+    final claims = JwtDecoder.decode(response.accessToken);
+    final user = UserJwt.fromJwtClaims(claims);
+    state = state.copyWith(user: user, isBootstrapping: false);
   }
 
   /// 로그아웃.

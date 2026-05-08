@@ -11,9 +11,10 @@ import 'steps/step_genre.dart';
 import 'steps/step_name.dart';
 import 'steps/step_password.dart';
 import 'steps/step_phone.dart';
+import 'steps/step_seat_preference.dart';
 import 'steps/step_terms.dart';
 
-/// 회원가입 6단계 플로우 컨테이너.
+/// 회원가입 7단계 플로우 컨테이너.
 ///
 /// - 상단: AppBar (뒤로가기 = 이전 단계 또는 화면 탈출) + StepProgressBar
 /// - 가운데: PageView (스와이프 비활성, currentStep 으로만 제어)
@@ -35,6 +36,7 @@ class _SignupFlowScreenState extends ConsumerState<SignupFlowScreen> {
     StepPhone(),
     StepTerms(),
     StepGenre(),
+    StepSeatPreference(),
   ];
 
   @override

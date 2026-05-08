@@ -1,18 +1,24 @@
 /// API 엔드포인트 상수.
 ///
-/// 실제 백엔드 연결 시 [baseUrl]만 환경변수/빌드 설정으로 분리하면 된다.
+/// baseUrl 은 빌드 시 `--dart-define=API_BASE_URL=...` 로 주입할 수 있다.
+/// 기본값은 Android 에뮬레이터에서 호스트 PC 의 localhost 로 접근하는 주소.
 class ApiEndpoints {
   ApiEndpoints._();
 
-  // TODO: 실제 백엔드 주소로 교체
-  static const String baseUrl = 'https://api.doogeun-ticket.com';
+  /// 개발 기본값: Android 에뮬레이터 → 호스트 localhost
+  /// 실기기/같은 LAN 에서는 실행 시:
+  ///   flutter run --dart-define=API_BASE_URL=http://<HOST_IP>:8080
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:8080',
+  );
 
   // ---- Auth ----
-  static const String login = '/auth/login';
-  static const String signup = '/auth/signup';
-  static const String logout = '/auth/logout';
-  static const String refresh = '/auth/refresh';
-  static const String me = '/auth/me';
+  static const String login = '/api/v1/auth/login';
+  static const String signup = '/api/v1/auth/signup';
+  static const String logout = '/api/v1/auth/logout';
+  static const String refresh = '/api/v1/auth/refresh';
+  static const String me = '/api/v1/auth/me';
 
   // ---- 공연 / 검색 ----
   static const String performances = '/performances';

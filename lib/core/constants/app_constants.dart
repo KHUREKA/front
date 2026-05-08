@@ -13,7 +13,8 @@ class AppConstants {
   ];
 
   /// 회원가입 단계 수.
-  static const int signupTotalSteps = 6;
+  /// 0:이름 1:이메일 2:비밀번호 3:휴대폰 4:약관 5:장르 6:좌석 선호
+  static const int signupTotalSteps = 7;
 }
 
 /// 장르 옵션 (이름 + 이모지).

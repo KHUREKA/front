@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/validators.dart';
 import '../../data/auth_repository.dart';
 import '../../data/dto/signup_request.dart';
+import '../../domain/seat_preference.dart';
 import 'auth_provider.dart';
 
 part 'signup_provider.freezed.dart';
@@ -41,6 +42,9 @@ class SignupFormState with _$SignupFormState {
 
     // Step 6
     @Default(<String>[]) List<String> selectedGenres,
+
+    // Step 7 — 좌석 선호 (백엔드 전송 대상)
+    SeatPreference? seatPreference,
 
     // 진행 상태
     @Default(0) int currentStep,
@@ -80,6 +84,8 @@ class SignupFormState with _$SignupFormState {
         return requiredAgreed;
       case 5:
         return selectedGenres.isNotEmpty;
+      case 6:
+        return seatPreference != null;
       default:
         return false;
     }
@@ -151,6 +157,11 @@ class SignupNotifier extends StateNotifier<SignupFormState> {
     state = state.copyWith(selectedGenres: next);
   }
 
+  // ---- 좌석 선호 ----
+
+  void setSeatPreference(SeatPreference value) =>
+      state = state.copyWith(seatPreference: value);
+
   // ---- 이메일 중복 확인 ----
 
   Future<void> checkEmailDuplicate() async {
@@ -198,12 +209,12 @@ class SignupNotifier extends StateNotifier<SignupFormState> {
     state = state.copyWith(isSubmitting: true, submitError: null);
     try {
       final request = SignupRequest(
-        name: state.name.trim(),
         email: state.email.trim(),
         password: state.password,
+        username: state.name.trim(),
         phone: state.phone.isEmpty ? null : state.phone,
-        marketingAgreed: state.agreedMarketing,
-        genres: state.selectedGenres,
+        // canProceed 가 마지막 단계에서 seatPreference != null 을 보장.
+        seatPreference: state.seatPreference!,
       );
       final response = await _repo.signup(request);
       await _ref.read(authProvider.notifier).applyAuthResponse(response);

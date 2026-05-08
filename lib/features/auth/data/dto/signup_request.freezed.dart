@@ -21,12 +21,11 @@ SignupRequest _$SignupRequestFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SignupRequest {
-  String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get password => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
-  bool get marketingAgreed => throw _privateConstructorUsedError;
-  List<String> get genres => throw _privateConstructorUsedError;
+  SeatPreference get seatPreference => throw _privateConstructorUsedError;
 
   /// Serializes this SignupRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,12 +45,11 @@ abstract class $SignupRequestCopyWith<$Res> {
   ) = _$SignupRequestCopyWithImpl<$Res, SignupRequest>;
   @useResult
   $Res call({
-    String name,
     String email,
     String password,
+    String username,
     String? phone,
-    bool marketingAgreed,
-    List<String> genres,
+    SeatPreference seatPreference,
   });
 }
 
@@ -70,19 +68,14 @@ class _$SignupRequestCopyWithImpl<$Res, $Val extends SignupRequest>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
     Object? email = null,
     Object? password = null,
+    Object? username = null,
     Object? phone = freezed,
-    Object? marketingAgreed = null,
-    Object? genres = null,
+    Object? seatPreference = null,
   }) {
     return _then(
       _value.copyWith(
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
             email: null == email
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
@@ -91,18 +84,18 @@ class _$SignupRequestCopyWithImpl<$Res, $Val extends SignupRequest>
                 ? _value.password
                 : password // ignore: cast_nullable_to_non_nullable
                       as String,
+            username: null == username
+                ? _value.username
+                : username // ignore: cast_nullable_to_non_nullable
+                      as String,
             phone: freezed == phone
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String?,
-            marketingAgreed: null == marketingAgreed
-                ? _value.marketingAgreed
-                : marketingAgreed // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            genres: null == genres
-                ? _value.genres
-                : genres // ignore: cast_nullable_to_non_nullable
-                      as List<String>,
+            seatPreference: null == seatPreference
+                ? _value.seatPreference
+                : seatPreference // ignore: cast_nullable_to_non_nullable
+                      as SeatPreference,
           )
           as $Val,
     );
@@ -119,12 +112,11 @@ abstract class _$$SignupRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String name,
     String email,
     String password,
+    String username,
     String? phone,
-    bool marketingAgreed,
-    List<String> genres,
+    SeatPreference seatPreference,
   });
 }
 
@@ -142,19 +134,14 @@ class __$$SignupRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
     Object? email = null,
     Object? password = null,
+    Object? username = null,
     Object? phone = freezed,
-    Object? marketingAgreed = null,
-    Object? genres = null,
+    Object? seatPreference = null,
   }) {
     return _then(
       _$SignupRequestImpl(
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
         email: null == email
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
@@ -163,18 +150,18 @@ class __$$SignupRequestImplCopyWithImpl<$Res>
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
                   as String,
+        username: null == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                  as String,
         phone: freezed == phone
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String?,
-        marketingAgreed: null == marketingAgreed
-            ? _value.marketingAgreed
-            : marketingAgreed // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        genres: null == genres
-            ? _value._genres
-            : genres // ignore: cast_nullable_to_non_nullable
-                  as List<String>,
+        seatPreference: null == seatPreference
+            ? _value.seatPreference
+            : seatPreference // ignore: cast_nullable_to_non_nullable
+                  as SeatPreference,
       ),
     );
   }
@@ -184,40 +171,30 @@ class __$$SignupRequestImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SignupRequestImpl implements _SignupRequest {
   const _$SignupRequestImpl({
-    required this.name,
     required this.email,
     required this.password,
+    required this.username,
     this.phone,
-    this.marketingAgreed = false,
-    final List<String> genres = const <String>[],
-  }) : _genres = genres;
+    required this.seatPreference,
+  });
 
   factory _$SignupRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$SignupRequestImplFromJson(json);
 
   @override
-  final String name;
-  @override
   final String email;
   @override
   final String password;
   @override
+  final String username;
+  @override
   final String? phone;
   @override
-  @JsonKey()
-  final bool marketingAgreed;
-  final List<String> _genres;
-  @override
-  @JsonKey()
-  List<String> get genres {
-    if (_genres is EqualUnmodifiableListView) return _genres;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_genres);
-  }
+  final SeatPreference seatPreference;
 
   @override
   String toString() {
-    return 'SignupRequest(name: $name, email: $email, password: $password, phone: $phone, marketingAgreed: $marketingAgreed, genres: $genres)';
+    return 'SignupRequest(email: $email, password: $password, username: $username, phone: $phone, seatPreference: $seatPreference)';
   }
 
   @override
@@ -225,26 +202,25 @@ class _$SignupRequestImpl implements _SignupRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SignupRequestImpl &&
-            (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
             (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.marketingAgreed, marketingAgreed) ||
-                other.marketingAgreed == marketingAgreed) &&
-            const DeepCollectionEquality().equals(other._genres, _genres));
+            (identical(other.seatPreference, seatPreference) ||
+                other.seatPreference == seatPreference));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    name,
     email,
     password,
+    username,
     phone,
-    marketingAgreed,
-    const DeepCollectionEquality().hash(_genres),
+    seatPreference,
   );
 
   /// Create a copy of SignupRequest
@@ -263,29 +239,26 @@ class _$SignupRequestImpl implements _SignupRequest {
 
 abstract class _SignupRequest implements SignupRequest {
   const factory _SignupRequest({
-    required final String name,
     required final String email,
     required final String password,
+    required final String username,
     final String? phone,
-    final bool marketingAgreed,
-    final List<String> genres,
+    required final SeatPreference seatPreference,
   }) = _$SignupRequestImpl;
 
   factory _SignupRequest.fromJson(Map<String, dynamic> json) =
       _$SignupRequestImpl.fromJson;
 
   @override
-  String get name;
-  @override
   String get email;
   @override
   String get password;
   @override
+  String get username;
+  @override
   String? get phone;
   @override
-  bool get marketingAgreed;
-  @override
-  List<String> get genres;
+  SeatPreference get seatPreference;
 
   /// Create a copy of SignupRequest
   /// with the given fields replaced by the non-null parameter values.

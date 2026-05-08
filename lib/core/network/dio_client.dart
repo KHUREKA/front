@@ -39,6 +39,7 @@ class DioClient {
     );
 
     _dio.interceptors.add(_authInterceptor());
+    _dio.interceptors.add(_envelopeInterceptor());
     if (kDebugMode) {
       _dio.interceptors.add(
         LogInterceptor(
@@ -61,6 +62,40 @@ class DioClient {
   /// 앱 초기화 후 라우터가 준비되면 401 핸들러를 등록한다.
   void setUnauthorizedHandler(UnauthorizedHandler handler) {
     _onUnauthorized = handler;
+  }
+
+  /// 백엔드 공통 응답 봉투를 풀어준다.
+  ///
+  /// 성공: `{ "result": "SUCCESS", "data": { ... } }` → `response.data` 를 `data` 로 교체
+  /// 실패: `{ "result": "ERROR", "error": { code, message, ... } }` → `DioException` 으로 reject
+  ///
+  /// 봉투가 아닌 응답(서드파티/이미지 등)은 그대로 통과.
+  Interceptor _envelopeInterceptor() {
+    return InterceptorsWrapper(
+      onResponse: (response, handler) {
+        final body = response.data;
+        if (body is Map<String, dynamic> && body.containsKey('result')) {
+          final result = body['result'];
+          if (result == 'SUCCESS') {
+            response.data = body['data'];
+            handler.next(response);
+            return;
+          }
+          if (result == 'ERROR') {
+            handler.reject(
+              DioException(
+                requestOptions: response.requestOptions,
+                response: response,
+                type: DioExceptionType.badResponse,
+                error: body['error'],
+              ),
+            );
+            return;
+          }
+        }
+        handler.next(response);
+      },
+    );
   }
 
   Interceptor _authInterceptor() {
@@ -142,8 +177,17 @@ String friendlyMessageFromError(Object error) {
 
 String? _extractServerMessage(Object? data) {
   if (data is Map) {
-    final value = data['message'] ?? data['error'] ?? data['detail'];
-    if (value is String) return value;
+    // 1) 공통 응답 봉투: { "result": "ERROR", "error": { "message": "..." } }
+    final err = data['error'];
+    if (err is Map) {
+      final msg = err['message'];
+      if (msg is String && msg.isNotEmpty) return msg;
+    }
+    if (err is String && err.isNotEmpty) return err;
+
+    // 2) 평면 응답 호환
+    final value = data['message'] ?? data['detail'];
+    if (value is String && value.isNotEmpty) return value;
   }
   return null;
 }

@@ -8,24 +8,28 @@ part of 'signup_request.dart';
 
 _$SignupRequestImpl _$$SignupRequestImplFromJson(Map<String, dynamic> json) =>
     _$SignupRequestImpl(
-      name: json['name'] as String,
       email: json['email'] as String,
       password: json['password'] as String,
+      username: json['username'] as String,
       phone: json['phone'] as String?,
-      marketingAgreed: json['marketingAgreed'] as bool? ?? false,
-      genres:
-          (json['genres'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const <String>[],
+      seatPreference: $enumDecode(
+        _$SeatPreferenceEnumMap,
+        json['seatPreference'],
+      ),
     );
 
 Map<String, dynamic> _$$SignupRequestImplToJson(_$SignupRequestImpl instance) =>
     <String, dynamic>{
-      'name': instance.name,
       'email': instance.email,
       'password': instance.password,
+      'username': instance.username,
       'phone': instance.phone,
-      'marketingAgreed': instance.marketingAgreed,
-      'genres': instance.genres,
+      'seatPreference': _$SeatPreferenceEnumMap[instance.seatPreference]!,
     };
+
+const _$SeatPreferenceEnumMap = {
+  SeatPreference.none: 'NONE',
+  SeatPreference.eyesight: 'EYESIGHT',
+  SeatPreference.leg: 'LEG',
+  SeatPreference.hearing: 'HEARING',
+};

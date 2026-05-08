@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/dio_client.dart';
+import '../../../core/storage/secure_storage.dart';
 import '../domain/user.dart';
+import 'auth_repository_impl.dart';
 import 'dto/auth_response.dart';
 import 'dto/signup_request.dart';
-import 'mock_auth_repository.dart';
 
 /// 인증 관련 데이터 접근 인터페이스.
 ///
@@ -47,12 +49,10 @@ class AuthException implements Exception {
 
 /// 앱 전역 [AuthRepository] provider.
 ///
-/// 현재는 [MockAuthRepository] 반환. 서버 연결되면 [AuthRepositoryImpl] 로 교체:
-/// ```dart
-/// final dio = ref.watch(dioClientProvider);
-/// final storage = ref.watch(secureStorageProvider);
-/// return AuthRepositoryImpl(dioClient: dio, storage: storage);
-/// ```
+/// 실제 백엔드(`/api/v1/auth/*`)에 붙는 [AuthRepositoryImpl] 사용.
+/// 오프라인 개발이 필요하면 `MockAuthRepository()` 로 일시 교체.
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return MockAuthRepository();
+  final dio = ref.watch(dioClientProvider);
+  final storage = ref.watch(secureStorageProvider);
+  return AuthRepositoryImpl(dioClient: dio, storage: storage);
 });

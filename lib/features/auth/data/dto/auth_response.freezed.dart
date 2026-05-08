@@ -22,8 +22,7 @@ AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthResponse {
   String get accessToken => throw _privateConstructorUsedError;
-  String? get refreshToken => throw _privateConstructorUsedError;
-  User get user => throw _privateConstructorUsedError;
+  String get tokenType => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,9 +41,7 @@ abstract class $AuthResponseCopyWith<$Res> {
     $Res Function(AuthResponse) then,
   ) = _$AuthResponseCopyWithImpl<$Res, AuthResponse>;
   @useResult
-  $Res call({String accessToken, String? refreshToken, User user});
-
-  $UserCopyWith<$Res> get user;
+  $Res call({String accessToken, String tokenType});
 }
 
 /// @nodoc
@@ -61,38 +58,20 @@ class _$AuthResponseCopyWithImpl<$Res, $Val extends AuthResponse>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? accessToken = null,
-    Object? refreshToken = freezed,
-    Object? user = null,
-  }) {
+  $Res call({Object? accessToken = null, Object? tokenType = null}) {
     return _then(
       _value.copyWith(
             accessToken: null == accessToken
                 ? _value.accessToken
                 : accessToken // ignore: cast_nullable_to_non_nullable
                       as String,
-            refreshToken: freezed == refreshToken
-                ? _value.refreshToken
-                : refreshToken // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            user: null == user
-                ? _value.user
-                : user // ignore: cast_nullable_to_non_nullable
-                      as User,
+            tokenType: null == tokenType
+                ? _value.tokenType
+                : tokenType // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of AuthResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $UserCopyWith<$Res> get user {
-    return $UserCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
-    });
   }
 }
 
@@ -105,10 +84,7 @@ abstract class _$$AuthResponseImplCopyWith<$Res>
   ) = __$$AuthResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String accessToken, String? refreshToken, User user});
-
-  @override
-  $UserCopyWith<$Res> get user;
+  $Res call({String accessToken, String tokenType});
 }
 
 /// @nodoc
@@ -124,25 +100,17 @@ class __$$AuthResponseImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? accessToken = null,
-    Object? refreshToken = freezed,
-    Object? user = null,
-  }) {
+  $Res call({Object? accessToken = null, Object? tokenType = null}) {
     return _then(
       _$AuthResponseImpl(
         accessToken: null == accessToken
             ? _value.accessToken
             : accessToken // ignore: cast_nullable_to_non_nullable
                   as String,
-        refreshToken: freezed == refreshToken
-            ? _value.refreshToken
-            : refreshToken // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        user: null == user
-            ? _value.user
-            : user // ignore: cast_nullable_to_non_nullable
-                  as User,
+        tokenType: null == tokenType
+            ? _value.tokenType
+            : tokenType // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -153,8 +121,7 @@ class __$$AuthResponseImplCopyWithImpl<$Res>
 class _$AuthResponseImpl implements _AuthResponse {
   const _$AuthResponseImpl({
     required this.accessToken,
-    this.refreshToken,
-    required this.user,
+    this.tokenType = 'Bearer',
   });
 
   factory _$AuthResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -163,13 +130,12 @@ class _$AuthResponseImpl implements _AuthResponse {
   @override
   final String accessToken;
   @override
-  final String? refreshToken;
-  @override
-  final User user;
+  @JsonKey()
+  final String tokenType;
 
   @override
   String toString() {
-    return 'AuthResponse(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
+    return 'AuthResponse(accessToken: $accessToken, tokenType: $tokenType)';
   }
 
   @override
@@ -179,14 +145,13 @@ class _$AuthResponseImpl implements _AuthResponse {
             other is _$AuthResponseImpl &&
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
-            (identical(other.refreshToken, refreshToken) ||
-                other.refreshToken == refreshToken) &&
-            (identical(other.user, user) || other.user == user));
+            (identical(other.tokenType, tokenType) ||
+                other.tokenType == tokenType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, accessToken, refreshToken, user);
+  int get hashCode => Object.hash(runtimeType, accessToken, tokenType);
 
   /// Create a copy of AuthResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -205,8 +170,7 @@ class _$AuthResponseImpl implements _AuthResponse {
 abstract class _AuthResponse implements AuthResponse {
   const factory _AuthResponse({
     required final String accessToken,
-    final String? refreshToken,
-    required final User user,
+    final String tokenType,
   }) = _$AuthResponseImpl;
 
   factory _AuthResponse.fromJson(Map<String, dynamic> json) =
@@ -215,9 +179,7 @@ abstract class _AuthResponse implements AuthResponse {
   @override
   String get accessToken;
   @override
-  String? get refreshToken;
-  @override
-  User get user;
+  String get tokenType;
 
   /// Create a copy of AuthResponse
   /// with the given fields replaced by the non-null parameter values.

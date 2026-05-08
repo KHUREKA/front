@@ -37,8 +37,6 @@ class MockAuthRepository implements AuthRepository {
 
     return AuthResponse(
       accessToken: _fakeToken(email, kind: 'access'),
-      refreshToken: _fakeToken(email, kind: 'refresh'),
-      user: user,
     );
   }
 
@@ -49,16 +47,13 @@ class MockAuthRepository implements AuthRepository {
     final user = User(
       id: 'mock-user-${request.email.hashCode.abs()}',
       email: request.email,
-      name: request.name,
+      name: request.username,
       phone: request.phone,
-      genres: request.genres,
     );
     _currentUser = user;
 
     return AuthResponse(
       accessToken: _fakeToken(request.email, kind: 'access'),
-      refreshToken: _fakeToken(request.email, kind: 'refresh'),
-      user: user,
     );
   }
 
