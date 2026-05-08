@@ -8,13 +8,6 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/seat_preference.dart';
 import '../providers/seat_preference_provider.dart';
 
-/// 좌석 선택 모드 선택 화면.
-///
-/// - 좌상단 ← 뒤로
-/// - 큰 제목 "좌석 선택 방식을 골라주세요."
-/// - 두 개의 큰 모드 카드 (세로 스택):
-///   * 코랄 fill: 알아서 척척, AI 추천받기
-///   * 흰 fill + 보더: 사진으로 보고, 직접 고르기
 class SeatModeScreen extends ConsumerStatefulWidget {
   const SeatModeScreen({
     super.key,
@@ -31,7 +24,6 @@ class _SeatModeScreenState extends ConsumerState<SeatModeScreen> {
   @override
   void initState() {
     super.initState();
-    // 새 공연 시작 시 좌석 선호 초기화.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(seatPreferenceProvider.notifier).reset();
     });
@@ -68,17 +60,24 @@ class _SeatModeScreenState extends ConsumerState<SeatModeScreen> {
               // 뒤로
               Align(
                 alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: _back,
-                  padding: EdgeInsets.zero,
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    size: 28,
-                    color: AppColors.primary,
+                child: Transform.translate(
+                  offset: const Offset(-12, 0),
+                  child: IconButton(
+                    onPressed: _back,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 48,
+                      minHeight: 48,
+                    ),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      size: 28,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              //const SizedBox(height: 4),
 
               // 제목
               Text(
@@ -91,29 +90,101 @@ class _SeatModeScreenState extends ConsumerState<SeatModeScreen> {
 
               const SizedBox(height: 28),
 
-              // 카드들
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _ModeCard(
+              // 카드들 - 고정 높이
+              SizedBox(
+                height: 320,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _ModeCard(
                         filled: true,
-                        emoji: '🤖',
-                        title: '알아서 척척, AI 추천받기',
-                        description: '당첨 가능성이 가장 높은 자리를\nAI가 대신 찾아드려요.',
+                        imageAsset: 'assets/images/aiIMG.png',
+                        title: 'AI 추천받기',
+                        description: '당첨 가능성 높은 자리 추천',
                         onTap: _selectAi,
                       ),
-                      const SizedBox(height: 16),
-                      _ModeCard(
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _ModeCard(
                         filled: false,
-                        emoji: '🔍',
-                        title: '사진으로 보고, 직접 고르기',
-                        description: '실제 무대 모습과 이동이 편한 자리를\n사진으로 보고 직접 고를 수 있어요.',
+                        imageAsset: 'assets/images/selectIMG.png',
+                        title: '직접 고르기',
+                        description: '사진 보고 내가 직접 선택',
                         onTap: _selectManual,
                       ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // 안내 박스 - 카드 선택 도움말
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.lightbulb_rounded,
+                      color: AppColors.primary,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        '처음이시라면 AI 추천을 받아보세요.\n당첨 확률이 높은 자리를 골라드려요.',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textSecondary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Spacer(),
+
+              // 하단 미니 정보 - 단계 표시
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _StepDot(active: true),
+                        const SizedBox(width: 6),
+                        _StepDot(active: false),
+                        const SizedBox(width: 6),
+                        _StepDot(active: false),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '1단계 · 좌석 선택 방식 고르기',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary
+                            .withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -124,24 +195,17 @@ class _SeatModeScreenState extends ConsumerState<SeatModeScreen> {
   }
 }
 
-/// 모드 선택 카드.
-///
-/// 첨부 이미지 스타일을 따른다:
-/// - 카드 상단: 흰색 라운드 박스 안에 큰 일러스트 영역(이모지로 대체)
-/// - 카드 하단: 제목 + 설명 (좌측 정렬)
-/// - filled = true → 코랄 풀 카드, 흰 텍스트
-/// - filled = false → 흰 카드 + 옅은 보더, 어두운 텍스트
 class _ModeCard extends StatelessWidget {
   const _ModeCard({
     required this.filled,
-    required this.emoji,
+    required this.imageAsset,
     required this.title,
     required this.description,
     required this.onTap,
   });
 
   final bool filled;
-  final String emoji;
+  final String imageAsset;
   final String title;
   final String description;
   final VoidCallback onTap;
@@ -149,9 +213,6 @@ class _ModeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = filled ? AppColors.primary : const Color(0xFFEEEEEE);
-    final illustrationBg = filled
-        ? Colors.white
-        : Colors.white;
     final titleColor = filled ? Colors.white : AppColors.textPrimary;
     final descColor =
         filled ? Colors.white.withValues(alpha: 0.92) : AppColors.textSecondary;
@@ -165,44 +226,51 @@ class _ModeCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 일러스트 영역
               Container(
-                height: 140,
+                height: 160,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: illustrationBg,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  emoji,
-                  style: const TextStyle(fontSize: 72, height: 1),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset(
+                    imageAsset,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
 
               // 제목
               Text(
                 title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Pretendard',
-                  fontSize: 22,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: titleColor,
                   height: 1.3,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
 
               // 설명
               Text(
                 description,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Pretendard',
-                  fontSize: 16,
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: descColor,
                   height: 1.5,
@@ -211,6 +279,27 @@ class _ModeCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// 하단 진행 단계 표시 점.
+class _StepDot extends StatelessWidget {
+  const _StepDot({required this.active});
+
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: active ? 20 : 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: active
+            ? AppColors.primary
+            : AppColors.primary.withValues(alpha: 0.25),
+        borderRadius: BorderRadius.circular(4),
       ),
     );
   }
