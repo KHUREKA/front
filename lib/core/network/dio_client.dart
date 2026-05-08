@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/secure_storage.dart';
 import 'api_endpoints.dart';
@@ -146,3 +147,11 @@ String? _extractServerMessage(Object? data) {
   }
   return null;
 }
+
+/// 앱 전역 [DioClient] 싱글턴 provider.
+///
+/// 401 핸들러는 라우터 초기화 후에 [DioClient.setUnauthorizedHandler] 로 등록한다.
+final dioClientProvider = Provider<DioClient>((ref) {
+  final storage = ref.watch(secureStorageProvider);
+  return DioClient(storage: storage);
+});

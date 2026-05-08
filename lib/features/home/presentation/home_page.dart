@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/router/route_names.dart';
-import '../../../core/storage/secure_storage.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../auth/presentation/auth_state.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 
-/// 홈 placeholder. 2단계에서 실제 화면 구현.
-class HomePage extends StatelessWidget {
-  const HomePage({
-    super.key,
-    required this.storage,
-    required this.authState,
-  });
-
-  final SecureStorage storage;
-  final AuthState authState;
-
-  Future<void> _logout(BuildContext context) async {
-    await storage.clearTokens();
-    authState.setAuthenticated(false);
-    if (!context.mounted) return;
-    context.go(RouteNames.login);
-  }
+/// 홈 placeholder. 다음 단계에서 실제 콘텐츠로 교체.
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).user;
+    final greetingName = user?.name ?? '회원';
+
     return Scaffold(
       appBar: AppBar(title: const Text('홈')),
       body: SafeArea(
@@ -35,15 +23,23 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              Text('두근티켓 홈', style: AppTextStyles.displayLarge),
-              const SizedBox(height: 8),
               Text(
-                '아직 화면이 만들어지지 않았어요.\n다음 단계에서 구현됩니다.',
-                style: AppTextStyles.bodyLarge,
+                '$greetingName님,\n환영해요!',
+                style: AppTextStyles.displayLarge,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '홈 화면은 다음 단계에서 만들 예정이에요.',
+                style: AppTextStyles.bodyLarge.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
               const Spacer(),
               OutlinedButton(
-                onPressed: () => _logout(context),
+                onPressed: () async {
+                  await ref.read(authProvider.notifier).logout();
+                  // 라우터의 redirect 가드가 자동으로 /login 으로 이동시킴.
+                },
                 child: const Text('로그아웃'),
               ),
             ],

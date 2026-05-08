@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.8
 
@@ -30,7 +32,7 @@ dependencies:
   cached_network_image: ^3.3.1
 
   # 한국어/날짜 포맷
-  intl: ^0.19.0
+  intl: ^0.20.2
 
   # 모델 직렬화
   freezed_annotation: ^2.4.4
@@ -53,22 +55,15 @@ flutter:
   assets:
     - assets/images/
 
-  # Pretendard 폰트
-  # 폰트 파일은 assets/fonts/ 에 추가해야 한다.
-   - Pretendard-Regular.otf  (weight 400)
-   - Pretendard-Medium.otf   (weight 500)
-   - Pretendard-SemiBold.otf (weight 600)
-   - Pretendard-Bold.otf     (weight 700)
-  # 파일 추가 후 아래 주석을 해제하면 된다.
-  #
-  # fonts:
-  #   - family: Pretendard
-  #     fonts:
-  #       - asset: assets/fonts/Pretendard-Regular.otf
-  #         weight: 400
-  #       - asset: assets/fonts/Pretendard-Medium.otf
-  #         weight: 500
-  #       - asset: assets/fonts/Pretendard-SemiBold.otf
-  #         weight: 600
-  #       - asset: assets/fonts/Pretendard-Bold.otf
-  #         weight: 700
+  # Pretendard 폰트 — 파일은 assets/fonts/ 에 위치
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Pretendard-Medium.otf
+          weight: 500
+        - asset: assets/fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Pretendard-Bold.otf
+          weight: 700

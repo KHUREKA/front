@@ -3,38 +3,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/app.dart';
 import 'app/router/app_router.dart';
-import 'app/router/route_names.dart';
 import 'core/network/dio_client.dart';
-import 'core/storage/secure_storage.dart';
-import 'features/auth/presentation/auth_state.dart';
+import 'features/auth/presentation/providers/auth_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: _AppEntry()));
+}
 
-  // ---- 의존성 ----
-  final storage = SecureStorage();
-  final authState = AuthState();
+/// 앱 진입점 위젯.
+///
+/// Riverpod 컨테이너가 초기화된 다음, 401 핸들러를 dio 클라이언트에 연결한다.
+/// (라우터/스토리지/인증 상태는 모두 provider 로 노출되어 있어 직접 생성하지 않는다.)
+class _AppEntry extends ConsumerStatefulWidget {
+  const _AppEntry();
 
-  // Dio: 401 시 호출될 콜백은 라우터 생성 후 등록
-  final dioClient = DioClient(storage: storage);
+  @override
+  ConsumerState<_AppEntry> createState() => _AppEntryState();
+}
 
-  // 라우터
-  final router = createAppRouter(
-    storage: storage,
-    authState: authState,
-  );
+class _AppEntryState extends ConsumerState<_AppEntry> {
+  @override
+  void initState() {
+    super.initState();
+    // 401 발생 시 토큰 정리 + 인증 상태 false → 라우터 가드가 /login 으로 이동.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(dioClientProvider).setUnauthorizedHandler(() async {
+        await ref.read(authProvider.notifier).forceLogout();
+      });
+    });
+  }
 
-  // 401 발생 시: 로컬 토큰 삭제는 인터셉터가 처리, 추가로 인증 상태 false + /login 이동
-  dioClient.setUnauthorizedHandler(() async {
-    authState.setAuthenticated(false);
-    router.go(RouteNames.login);
-  });
-
-  // 추후 Riverpod로 dio/storage/authState를 주입할 예정이지만,
-  // 1단계 뼈대에서는 직접 생성해 위젯 트리에 전달한다.
-  runApp(
-    ProviderScope(
-      child: DoogeunTicketApp(router: router),
-    ),
-  );
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.watch(goRouterProvider);
+    return DoogeunTicketApp(router: router);
+  }
 }

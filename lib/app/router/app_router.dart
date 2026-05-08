@@ -1,47 +1,58 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/storage/secure_storage.dart';
-import '../../features/auth/presentation/auth_state.dart';
-import '../../features/auth/presentation/login_page.dart';
-import '../../features/auth/presentation/onboarding_page.dart';
-import '../../features/auth/presentation/signup_page.dart';
-import '../../features/auth/presentation/splash_page.dart';
+import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentation/screens/signup/signup_complete_screen.dart';
+import '../../features/auth/presentation/screens/signup/signup_flow_screen.dart';
+import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/home_page.dart';
 import 'route_names.dart';
 
-/// GoRouter 인스턴스 생성.
+/// authProvider 변화를 GoRouter로 전달하기 위한 가벼운 Listenable.
+class _RouterRefresh extends ChangeNotifier {
+  void refresh() => notifyListeners();
+}
+
+/// Riverpod 기반 GoRouter.
 ///
 /// 인증 가드:
-/// - /splash 는 항상 허용 (부팅 중 토큰 확인)
-/// - 비로그인 사용자가 보호된 라우트 진입 → /login 으로
-/// - 로그인된 사용자가 인증 플로우(/login, /signup, /onboarding) 진입 → /home 으로
-GoRouter createAppRouter({
-  required SecureStorage storage,
-  required AuthState authState,
-}) {
+/// - `/splash` 는 항상 통과 (자체 분기)
+/// - `bootstrap` 진행 중이면 `/splash` 로 (다른 화면 깜빡임 방지)
+/// - 비로그인 + 보호 라우트 → `/login`
+/// - 로그인 + 인증 플로우(`/login`, `/signup`, `/onboarding`) → `/home`
+/// - `/signup-complete` 는 인증된 사용자 전용 (자체 타이머로 `/home` 이동)
+final goRouterProvider = Provider<GoRouter>((ref) {
+  final refresh = _RouterRefresh();
+  ref.onDispose(refresh.dispose);
+
+  // authProvider 변화 시 라우터 redirect 재평가.
+  ref.listen<AuthState>(authProvider, (_, __) => refresh.refresh());
+
   return GoRouter(
     initialLocation: RouteNames.splash,
-    refreshListenable: authState,
-    debugLogDiagnostics: true,
+    refreshListenable: refresh,
+    debugLogDiagnostics: kDebugMode,
     redirect: (context, state) {
+      final auth = ref.read(authProvider);
       final loc = state.matchedLocation;
-      final loggedIn = authState.isAuthenticated;
 
-      // 스플래시는 자체적으로 분기하므로 가드 통과
       if (loc == RouteNames.splash) return null;
+
+      if (auth.isBootstrapping) return RouteNames.splash;
 
       final inAuthFlow = loc == RouteNames.login ||
           loc == RouteNames.signup ||
           loc == RouteNames.onboarding;
 
-      // 비로그인 + 보호된 라우트 → 로그인
-      if (!loggedIn && !inAuthFlow) {
+      if (!auth.isAuthenticated && !inAuthFlow) {
         return RouteNames.login;
       }
 
-      // 로그인 상태 + 인증 플로우 → 홈
-      if (loggedIn && inAuthFlow) {
+      if (auth.isAuthenticated && inAuthFlow) {
         return RouteNames.home;
       }
 
@@ -51,33 +62,32 @@ GoRouter createAppRouter({
       GoRoute(
         path: RouteNames.splash,
         name: 'splash',
-        builder: (context, state) => SplashPage(
-          storage: storage,
-          authState: authState,
-        ),
+        builder: (_, __) => const SplashScreen(),
       ),
       GoRoute(
         path: RouteNames.onboarding,
         name: 'onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (_, __) => const OnboardingScreen(),
       ),
       GoRoute(
         path: RouteNames.login,
         name: 'login',
-        builder: (context, state) => LoginPage(authState: authState),
+        builder: (_, __) => const LoginScreen(),
       ),
       GoRoute(
         path: RouteNames.signup,
         name: 'signup',
-        builder: (context, state) => const SignupPage(),
+        builder: (_, __) => const SignupFlowScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.signupComplete,
+        name: 'signupComplete',
+        builder: (_, __) => const SignupCompleteScreen(),
       ),
       GoRoute(
         path: RouteNames.home,
         name: 'home',
-        builder: (context, state) => HomePage(
-          storage: storage,
-          authState: authState,
-        ),
+        builder: (_, __) => const HomePage(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -93,4 +103,4 @@ GoRouter createAppRouter({
       ),
     ),
   );
-}
+});

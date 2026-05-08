@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// 보안 저장소 래퍼.
@@ -66,3 +67,6 @@ class SecureStorage {
     return token != null && token.isNotEmpty;
   }
 }
+
+/// 앱 전역 [SecureStorage] 싱글턴 provider.
+final secureStorageProvider = Provider<SecureStorage>((ref) => SecureStorage());
