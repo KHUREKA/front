@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/유성/Desktop/KHUTHON/front/.claude/worktrees/admiring-hawking/assets/**)",
+      "Read(//c/Users/유성/Desktop/KHUTHON/front/.claude/worktrees/admiring-hawking/**)"
+    ]
+  }
+}

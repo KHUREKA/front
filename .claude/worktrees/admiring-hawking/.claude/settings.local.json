@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do touch:*)",
+      "Bash(done)",
+      "Bash(gh pr:*)",
+      "Bash(where gh:*)",
+      "Read(//c/Program Files/**)",
+      "Bash(powershell -Command \"Get-Command gh -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell -Command \"Get-Command gh.exe -All -ErrorAction SilentlyContinue | Format-List Name,Source\")",
+      "Bash(powershell.exe -NoProfile -Command \"\\(Get-Command gh -ErrorAction SilentlyContinue\\).Source\")",
+      "Bash(mkdir -p lib/features/auth/data/dto lib/features/auth/presentation/providers lib/features/auth/presentation/screens/signup/steps lib/features/auth/presentation/widgets)",
+      "Bash(rm -f lib/features/auth/data/.gitkeep lib/features/auth/domain/.gitkeep lib/features/auth/presentation/.gitkeep)",
+      "Bash(rm -f lib/features/home/data/.gitkeep lib/features/home/domain/.gitkeep lib/features/home/presentation/.gitkeep)",
+      "Bash(mkdir -p lib/features/home/data/dto lib/features/home/presentation/providers lib/features/home/presentation/screens lib/features/home/presentation/widgets)",
+      "Bash(mkdir -p lib/features/lottery/presentation/screens lib/features/mypage/presentation/screens)",
+      "Bash(rm -f lib/features/mypage/data/.gitkeep lib/features/mypage/domain/.gitkeep lib/features/mypage/presentation/.gitkeep)"
+    ]
+  }
+}

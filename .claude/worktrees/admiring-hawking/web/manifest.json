@@ -1,0 +1,35 @@
+{
+    "name": "도담",
+    "short_name": "도담",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FF5A5F",
+    "theme_color": "#FF5A5F",
+    "description": "도담 - 어르신을 위한 공연 티켓 자동 응모 앱",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
