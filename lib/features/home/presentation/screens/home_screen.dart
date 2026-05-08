@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../mypage/presentation/providers/profile_provider.dart';
 import '../../domain/performance.dart';
 import '../widgets/hero_discovery_card.dart';
 import '../widgets/nearby_performance_list.dart';
@@ -21,8 +22,14 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 이름은 마이페이지 프로필(/mypage/me)을 우선 사용 — 사용자가 정보 수정 시 즉시 반영.
+    // 프로필 로딩 중/에러일 땐 JWT 디코드 결과(authProvider)로 폴백.
+    final asyncProfile = ref.watch(userProfileProvider);
     final user = ref.watch(authProvider).user;
-    final greetingName = user?.name ?? '회원';
+    final greetingName = asyncProfile.maybeWhen(
+      data: (p) => p.name.isNotEmpty ? p.name : (user?.name ?? '회원'),
+      orElse: () => user?.name ?? '회원',
+    );
 
     return SafeArea(
       bottom: false,

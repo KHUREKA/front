@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>가까운 공연을 찾아드리기 위해 현재 위치를 사용해요. 한 번만 허용해주시면 돼요.</string>
 </dict>
 </plist>

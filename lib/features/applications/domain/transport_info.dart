@@ -47,10 +47,23 @@ class TransportInfo {
     this.subway,
     this.bus,
     this.taxi,
+    this.kakaoMapUrl,
+    this.kakaoMapTransitUrl,
+    this.kakaoMapCarUrl,
+    this.kakaoMapWalkUrl,
   });
 
   final String address; // "서울 송파구 올림픽로 25"
   final SubwayInfo? subway;
   final BusInfo? bus;
   final TaxiInfo? taxi;
+
+  // 카카오맵 deeplink (백엔드 KakaoRouteResponse 또는 클라이언트 자체 조립).
+  // null 이면 "지도 앱으로 길찾기" 버튼이 비활성/안내 메시지로 동작.
+  final String? kakaoMapUrl;
+  final String? kakaoMapTransitUrl;
+  final String? kakaoMapCarUrl;
+  final String? kakaoMapWalkUrl;
+
+  bool get hasMapUrl => kakaoMapUrl != null;
 }

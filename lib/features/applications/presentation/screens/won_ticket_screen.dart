@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -9,6 +11,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/friendly_error_view.dart';
 import '../../domain/assigned_seat.dart';
 import '../../domain/lottery_application.dart';
+import '../../domain/transport_info.dart';
 import '../providers/applications_provider.dart';
 import '../widgets/transport_section.dart';
 
@@ -136,19 +139,8 @@ class WonTicketScreen extends ConsumerWidget {
                     ),
                     data: (info) => TransportSection(
                       info: info,
-                      onCopyAddress: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('주소를 복사했어요.'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      },
-                      onOpenMap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('지도 앱 연결은 준비 중이에요.')),
-                        );
-                      },
+                      onCopyAddress: () => _copyAddress(context, info),
+                      onOpenMap: () => _openKakaoMap(context, info),
                     ),
                   ),
                 ),
@@ -189,6 +181,44 @@ class WonTicketScreen extends ConsumerWidget {
         },
       ),
     );
+  }
+}
+
+// ─────────────────────────────────────
+// 교통편 액션 핸들러
+// ─────────────────────────────────────
+Future<void> _copyAddress(BuildContext context, TransportInfo info) async {
+  if (info.address.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('아직 주소 정보가 없어요.')),
+    );
+    return;
+  }
+  await Clipboard.setData(ClipboardData(text: info.address));
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('주소를 복사했어요.'),
+      duration: Duration(seconds: 2),
+    ),
+  );
+}
+
+Future<void> _openKakaoMap(BuildContext context, TransportInfo info) async {
+  final url = info.kakaoMapUrl;
+  if (url == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('지도 정보가 아직 준비되지 않았어요.')),
+    );
+    return;
+  }
+  final uri = Uri.parse(url);
+  final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+  if (!ok && context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('지도 앱을 열 수 없어요. 브라우저로 열게요.')),
+    );
+    await launchUrl(uri); // 폴백: 인앱 브라우저
   }
 }
 
@@ -267,7 +297,7 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final perf = application.performance;
-    final seat = application.assignedSeat;
+    final seats = application.assignedSeats;
 
     return Material(
       color: Colors.white,
@@ -340,8 +370,8 @@ class _TicketCard extends StatelessWidget {
 
           const _DashedDivider(),
 
-          // 좌석 정보
-          if (seat != null) _SeatBlock(seat: seat),
+          // 좌석 정보 (1~4매)
+          if (seats.isNotEmpty) _SeatBlock(seats: seats),
 
           const _DashedDivider(),
 
@@ -358,7 +388,9 @@ class _TicketCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: CustomPaint(
-                    painter: _QrPlaceholderPainter(seed: seat?.qrCode ?? ''),
+                    painter: _QrPlaceholderPainter(
+                      seed: seats.isNotEmpty ? seats.first.qrCode : '',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -389,21 +421,26 @@ class _TicketCard extends StatelessWidget {
 }
 
 class _SeatBlock extends StatelessWidget {
-  const _SeatBlock({required this.seat});
-  final AssignedSeat seat;
+  const _SeatBlock({required this.seats});
+  final List<AssignedSeat> seats;
 
   @override
   Widget build(BuildContext context) {
+    final first = seats.first;
+    // 같은 응모 안의 좌석은 같은 구역에 배정되므로 section 은 첫 좌석 기준 한 번만.
+    final hasView = first.stageViewImageUrl.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '내 좌석',
+                  '내 좌석 (${seats.length}매)',
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -412,37 +449,53 @@ class _SeatBlock extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  seat.fullLabel,
+                  first.section,
                   style: const TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                    height: 1.2,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                    height: 1.3,
                   ),
                 ),
+                const SizedBox(height: 2),
+                for (final s in seats)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      '${s.row} ${s.seatNumber}',
+                      style: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        height: 1.25,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: CachedNetworkImage(
-              imageUrl: seat.stageViewImageUrl,
-              width: 80,
-              height: 80,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => Container(
+          if (hasView)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                imageUrl: first.stageViewImageUrl,
                 width: 80,
                 height: 80,
-                color: const Color(0xFFEDEDED),
-              ),
-              errorWidget: (_, __, ___) => Container(
-                width: 80,
-                height: 80,
-                color: const Color(0xFFEDEDED),
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(
+                  width: 80,
+                  height: 80,
+                  color: const Color(0xFFEDEDED),
+                ),
+                errorWidget: (_, __, ___) => Container(
+                  width: 80,
+                  height: 80,
+                  color: const Color(0xFFEDEDED),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../domain/lottery_application.dart';
 import '../domain/seat_preference.dart';
 import '../domain/section.dart';
-import 'mock_seat_repository.dart';
+import 'seat_repository_impl.dart';
 
 /// 좌석/응모 데이터 접근 인터페이스.
 abstract class SeatRepository {
@@ -17,7 +18,10 @@ abstract class SeatRepository {
   });
 }
 
-/// 앱 전역 [SeatRepository] provider — 현재는 Mock.
+/// 앱 전역 [SeatRepository] provider.
+///
+/// 백엔드 직결([SeatRepositoryImpl]). 오프라인 개발이 필요하면
+/// `MockSeatRepository()` 로 일시 교체.
 final seatRepositoryProvider = Provider<SeatRepository>((ref) {
-  return MockSeatRepository();
+  return SeatRepositoryImpl(dioClient: ref.watch(dioClientProvider));
 });

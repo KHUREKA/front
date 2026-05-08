@@ -1,8 +1,9 @@
+import '../../auth/domain/seat_preference.dart';
 import '../../home/domain/performance_genre.dart';
 
 /// 사용자 프로필.
 ///
-/// 인증된 [User] 에 가입일/관심장르/보호자 같은 추가 정보를 합친 형태.
+/// 인증된 [User] 에 가입일/관심장르/보호자/좌석 선호도 같은 추가 정보를 합친 형태.
 class UserProfile {
   const UserProfile({
     required this.id,
@@ -13,6 +14,7 @@ class UserProfile {
     this.interests = const [],
     this.guardianName,
     this.guardianPhone,
+    this.seatPreference,
   });
 
   final String id;
@@ -23,6 +25,7 @@ class UserProfile {
   final List<PerformanceGenre> interests;
   final String? guardianName;
   final String? guardianPhone;
+  final SeatPreference? seatPreference;
 
   bool get hasGuardian =>
       guardianName != null && guardianName!.trim().isNotEmpty;
@@ -37,6 +40,7 @@ class UserProfile {
     String? guardianName,
     String? guardianPhone,
     bool clearGuardian = false,
+    SeatPreference? seatPreference,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -48,6 +52,7 @@ class UserProfile {
       guardianName: clearGuardian ? null : (guardianName ?? this.guardianName),
       guardianPhone:
           clearGuardian ? null : (guardianPhone ?? this.guardianPhone),
+      seatPreference: seatPreference ?? this.seatPreference,
     );
   }
 }

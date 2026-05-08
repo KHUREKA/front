@@ -6,8 +6,10 @@ import '../../domain/user_profile.dart';
 
 /// 사용자 프로필.
 ///
-/// 인증된 [User] 의 이름/이메일/전화번호와, repo 의 가입일/관심장르/보호자 정보를 합침.
-/// 캐싱 위해 `autoDispose` 사용 안 함.
+/// `repo.getProfile()` 이 백엔드(/api/v1/mypage/me)에서 email/username/phone 을
+/// 가져오고, 추가 정보(가입일/관심장르/보호자) 는 mock fallback 으로 채워진다.
+/// authProvider 의 user 는 JWT 디코드 결과(이메일/이름) 라 백엔드 응답이 더 정확하면
+/// 그대로 두고, 비어있을 때만 폴백으로 채운다.
 final userProfileProvider = FutureProvider<UserProfile>((ref) async {
   final authUser = ref.watch(authProvider).user;
   final repo = ref.watch(mypageRepositoryProvider);
@@ -16,10 +18,11 @@ final userProfileProvider = FutureProvider<UserProfile>((ref) async {
   if (authUser == null) return base;
 
   return base.copyWith(
-    id: authUser.id,
-    name: authUser.name,
-    email: authUser.email,
-    phone: authUser.phone,
-    // interests: authUser 가입 시 선택값을 우선 (저장값이 있으면 base 가 우선)
+    // id 는 base 에 의미 있는 값이 없으니 authUser 우선.
+    id: base.id.isEmpty ? authUser.id : base.id,
+    // 이름/이메일/전화는 백엔드(base)가 우선, 비었을 때만 JWT 값.
+    name: base.name.isNotEmpty ? base.name : authUser.name,
+    email: base.email.isNotEmpty ? base.email : authUser.email,
+    phone: base.phone ?? authUser.phone,
   );
 });

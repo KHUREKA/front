@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../../home/data/performance_repository.dart';
 import '../../home/domain/performance.dart';
 import '../domain/discovery_filter.dart';
+import 'discovery_repository_impl.dart';
 
 /// 발견(추천 검색) 레포 인터페이스.
 abstract class DiscoveryRepository {
@@ -60,7 +62,9 @@ class MockDiscoveryRepository implements DiscoveryRepository {
 }
 
 /// 앱 전역 [DiscoveryRepository] provider.
+///
+/// 백엔드(`/api/v1/events/recommend`) 직결. 오프라인 개발이 필요하면
+/// `MockDiscoveryRepository(ref.watch(performanceRepositoryProvider))` 로 일시 교체.
 final discoveryRepositoryProvider = Provider<DiscoveryRepository>((ref) {
-  final perfRepo = ref.watch(performanceRepositoryProvider);
-  return MockDiscoveryRepository(perfRepo);
+  return DiscoveryRepositoryImpl(dioClient: ref.watch(dioClientProvider));
 });

@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../auth/domain/seat_preference.dart';
 import '../../home/domain/performance_genre.dart';
 import '../domain/text_size_option.dart';
 import '../domain/user_preferences.dart';
@@ -30,6 +31,9 @@ class MockMyPageRepository implements MyPageRepository {
   static const _kGuardianName = 'profile_guardian_name';
   static const _kGuardianPhone = 'profile_guardian_phone';
   static const _kInterests = 'profile_interests'; // CSV of enum names
+  static const _kProfileName = 'profile_name';
+  static const _kProfilePhone = 'profile_phone';
+  static const _kSeatPref = 'profile_seat_pref';
 
   // ─────────────────────────────────────
   // Profile
@@ -53,14 +57,43 @@ class MockMyPageRepository implements MyPageRepository {
 
     return UserProfile(
       id: 'mock-user-1',
-      name: '김영희',
+      name: _prefs.getString(_kProfileName) ?? '김영희',
       email: 'younghee@example.com',
-      phone: '010-1234-5678',
+      phone: _prefs.getString(_kProfilePhone) ?? '010-1234-5678',
       joinedAt: DateTime(2024, 3, 15),
       interests: interests,
       guardianName: guardianName,
       guardianPhone: guardianPhone,
+      seatPreference: _readSeatPref(),
     );
+  }
+
+  @override
+  Future<UserProfile> updateProfile({
+    String? username,
+    String? phone,
+    SeatPreference? seatPreference,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (username != null && username.isNotEmpty) {
+      await _prefs.setString(_kProfileName, username);
+    }
+    if (phone != null) {
+      await _prefs.setString(_kProfilePhone, phone);
+    }
+    if (seatPreference != null) {
+      await _prefs.setString(_kSeatPref, seatPreference.name);
+    }
+    return getProfile();
+  }
+
+  SeatPreference? _readSeatPref() {
+    final raw = _prefs.getString(_kSeatPref);
+    if (raw == null) return null;
+    for (final v in SeatPreference.values) {
+      if (v.name == raw) return v;
+    }
+    return null;
   }
 
   @override

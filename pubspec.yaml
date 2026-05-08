@@ -50,6 +50,12 @@ dependencies:
   # JWT 디코드 (서버에 /me 가 없어 토큰 클레임에서 user 정보 추출)
   jwt_decoder: ^2.0.1
 
+  # 위치 (홈 거리 계산 / kakao-route 기준점)
+  geolocator: ^13.0.1
+
+  # 카카오맵 등 외부 지도 앱 열기
+  url_launcher: ^6.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

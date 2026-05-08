@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/network/dio_client.dart';
 import '../domain/performance.dart';
-import 'mock_performance_repository.dart';
+import 'performance_repository_impl.dart';
 
 /// 공연 데이터 접근 인터페이스.
 ///
 /// presentation 계층은 이 인터페이스에만 의존한다.
-/// 실제 API 호출은 `PerformanceRepositoryImpl` (서버 연결 시 추가),
-/// 개발용 가짜 데이터는 [MockPerformanceRepository] 가 담당.
+/// 실제 API 호출은 [PerformanceRepositoryImpl],
+/// 개발용 가짜 데이터는 `MockPerformanceRepository` 가 담당.
 abstract class PerformanceRepository {
   /// 사용자 위치 기준 가까운 공연.
   Future<List<Performance>> getNearbyPerformances({int limit = 10});
@@ -35,8 +36,8 @@ class PerformanceException implements Exception {
 
 /// 앱 전역 [PerformanceRepository] provider.
 ///
-/// 현재는 [MockPerformanceRepository] 반환. 서버 연결 시 `PerformanceRepositoryImpl`
-/// 로 교체.
+/// 실제 백엔드(`/api/v1/events/*`)에 연결된 [PerformanceRepositoryImpl] 사용.
+/// 오프라인 개발이 필요하면 `MockPerformanceRepository()` 로 교체.
 final performanceRepositoryProvider = Provider<PerformanceRepository>((ref) {
-  return MockPerformanceRepository();
+  return PerformanceRepositoryImpl(dioClient: ref.watch(dioClientProvider));
 });

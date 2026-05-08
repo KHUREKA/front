@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/location/location_service.dart';
+import '../../../core/network/dio_client.dart';
 import '../domain/lottery_application.dart';
 import '../domain/lottery_status.dart';
 import '../domain/transport_info.dart';
-import 'mock_applications_repository.dart';
+import 'applications_repository_impl.dart';
 
 /// 사용자 응모 통계.
 class UserStats {
@@ -39,8 +41,14 @@ class ApplicationException implements Exception {
   String toString() => 'ApplicationException: $message';
 }
 
-/// 앱 전역 [ApplicationsRepository] provider — 현재는 Mock.
+/// 앱 전역 [ApplicationsRepository] provider.
+///
+/// 실제 백엔드(`/api/v1/applications/*`) 연결. 오프라인 개발이 필요하면
+/// `MockApplicationsRepository()` 로 잠시 교체.
 final applicationsRepositoryProvider =
     Provider<ApplicationsRepository>((ref) {
-  return MockApplicationsRepository();
+  return ApplicationsRepositoryImpl(
+    dioClient: ref.watch(dioClientProvider),
+    locationService: ref.watch(locationServiceProvider),
+  );
 });

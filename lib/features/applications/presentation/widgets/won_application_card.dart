@@ -29,7 +29,8 @@ class WonApplicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final perf = application.performance;
-    final seat = application.assignedSeat;
+    final seats = application.assignedSeats;
+    final firstSeat = application.firstSeat;
     final daysUntil = application.timeUntilPerformance.inDays;
     final dateText = PerformanceDateFormat.singleDay(perf.startDate);
 
@@ -160,7 +161,7 @@ class WonApplicationCard extends StatelessWidget {
               ),
 
               // 좌석 정보
-              if (seat != null)
+              if (firstSeat != null)
                 Container(
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   padding: const EdgeInsets.all(14),
@@ -172,7 +173,9 @@ class WonApplicationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '내 좌석',
+                        seats.length > 1
+                            ? '내 좌석 (${seats.length}매)'
+                            : '내 좌석',
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -181,7 +184,9 @@ class WonApplicationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        seat.fullLabel,
+                        seats.length > 1
+                            ? '${firstSeat.section}  ${seats.map((s) => '${s.row} ${s.seatNumber}').join(', ')}'
+                            : firstSeat.fullLabel,
                         style: const TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 18,

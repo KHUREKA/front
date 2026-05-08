@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../../../../core/location/location_service.dart';
 import '../../../../core/storage/secure_storage.dart';
 import '../../data/auth_repository.dart';
 import '../../data/dto/auth_response.dart';
@@ -73,12 +74,32 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // 서버 통지 실패는 무시
     }
     await _storage.clearTokens();
+    _ref.read(locationServiceProvider).clearCache();
     state = state.copyWith(user: null, isBootstrapping: false);
+  }
+
+  /// 마이페이지에서 이름/전화번호를 수정한 직후 호출.
+  /// JWT 디코드로 만든 user 의 일부를 메모리에서 갱신해, 같은 세션 안에서
+  /// 다른 화면(홈 그리팅 등)도 새 값을 보게 한다.
+  /// (실제 신뢰 가능한 값은 `userProfileProvider` 가 백엔드에서 다시 가져옴)
+  void syncProfileFields({String? name, String? phone}) {
+    final current = state.user;
+    if (current == null) return;
+    state = state.copyWith(
+      user: User(
+        id: current.id,
+        email: current.email,
+        name: name ?? current.name,
+        phone: phone ?? current.phone,
+        genres: current.genres,
+      ),
+    );
   }
 
   /// 401 인터셉터에서 호출. 서버 통지 없이 로컬만 정리.
   Future<void> forceLogout() async {
     await _storage.clearTokens();
+    _ref.read(locationServiceProvider).clearCache();
     state = state.copyWith(user: null, isBootstrapping: false);
   }
 }

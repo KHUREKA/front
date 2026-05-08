@@ -167,10 +167,14 @@ class ResultPerformanceCard extends StatelessWidget {
   }
 
   String _priceText() {
+    // 백엔드가 좌석 zone 미등록 공연을 0/null 로 내려보내면 "가격 미정" 표시.
+    if (performance.priceMin <= 0 && performance.priceMax <= 0) {
+      return '가격 정보 준비중';
+    }
     final f = NumberFormat('#,###');
     final min = f.format(performance.priceMin);
     final max = f.format(performance.priceMax);
-    if (performance.priceMin == performance.priceMax) {
+    if (performance.priceMin == performance.priceMax || performance.priceMax <= 0) {
       return '$min원';
     }
     return '$min원 ~ $max원';

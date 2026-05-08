@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 홈 거리 계산 / 길찾기용 위치. 정밀(FINE) 또는 대략(COARSE) 중 하나 사용 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:label="front"
         android:name="${applicationName}"
