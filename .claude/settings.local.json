@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do touch:*)",
+      "Bash(done)",
+      "Bash(gh pr:*)",
+      "Bash(where gh:*)",
+      "Read(//c/Program Files/**)",
+      "Bash(powershell -Command \"Get-Command gh -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell -Command \"Get-Command gh.exe -All -ErrorAction SilentlyContinue | Format-List Name,Source\")",
+      "Bash(powershell.exe -NoProfile -Command \"\\(Get-Command gh -ErrorAction SilentlyContinue\\).Source\")"
+    ]
+  }
+}
