@@ -37,6 +37,9 @@ dependencies:
   # 결과 카드 슬라이드 인 애니메이션
   flutter_staggered_animations: ^1.1.1
 
+  # 좌석 구역 카드 스와이프 (틴더 스타일)
+  flutter_card_swiper: ^7.0.2
+
   # 한국어/날짜 포맷
   intl: ^0.20.2
 

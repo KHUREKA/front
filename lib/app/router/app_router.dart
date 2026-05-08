@@ -14,7 +14,10 @@ import '../../features/discovery/presentation/screens/discovery_result_screen.da
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/lottery/presentation/screens/lottery_screen.dart';
 import '../../features/mypage/presentation/screens/mypage_screen.dart';
-import '../../features/seat/presentation/screens/seat_placeholder_screen.dart';
+import '../../features/seat/presentation/screens/seat_application_complete_screen.dart';
+import '../../features/seat/presentation/screens/seat_confirm_screen.dart';
+import '../../features/seat/presentation/screens/seat_mode_screen.dart';
+import '../../features/seat/presentation/screens/seat_swipe_screen.dart';
 import 'main_tab_shell.dart';
 import 'route_names.dart';
 
@@ -107,11 +110,30 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const DiscoveryResultScreen(),
       ),
       GoRoute(
-        path: '${RouteNames.seat}/:performanceId',
-        name: 'seat',
-        builder: (context, state) => SeatPlaceholderScreen(
+        path: '${RouteNames.seat}/:performanceId/mode',
+        name: 'seatMode',
+        builder: (context, state) => SeatModeScreen(
           performanceId: state.pathParameters['performanceId']!,
         ),
+      ),
+      GoRoute(
+        path: '${RouteNames.seat}/:performanceId/swipe',
+        name: 'seatSwipe',
+        builder: (context, state) => SeatSwipeScreen(
+          performanceId: state.pathParameters['performanceId']!,
+        ),
+      ),
+      GoRoute(
+        path: '${RouteNames.seat}/:performanceId/confirm',
+        name: 'seatConfirm',
+        builder: (context, state) => SeatConfirmScreen(
+          performanceId: state.pathParameters['performanceId']!,
+        ),
+      ),
+      GoRoute(
+        path: '${RouteNames.seat}/:performanceId/complete',
+        name: 'seatComplete',
+        builder: (_, __) => const SeatApplicationCompleteScreen(),
       ),
 
       // ─────────────────────────────────────

@@ -15,7 +15,12 @@ class RouteNames {
   static const String discovery = '/discovery';
   static const String discoveryResult = '/discovery/result';
 
-  /// 좌석 선택 (현재 placeholder). 사용 예: `/seat/p01`.
+  /// 좌석 플로우 베이스. 사용 예: `/seat/p01/mode`.
   static const String seat = '/seat';
-  static String seatFor(String performanceId) => '$seat/$performanceId';
+  static String seatFor(String performanceId) =>
+      '$seat/$performanceId/mode';
+  static String seatModeFor(String id) => '$seat/$id/mode';
+  static String seatSwipeFor(String id) => '$seat/$id/swipe';
+  static String seatConfirmFor(String id) => '$seat/$id/confirm';
+  static String seatCompleteFor(String id) => '$seat/$id/complete';
 }
