@@ -16,12 +16,19 @@ class TmapRouteService {
 
   /// [eventId] 의 대중교통 경로 요약을 가져온다.
   ///
-  /// (필수: 사용자 lat/lng 는 현재 백엔드 스펙상 path/query 로 받지 않음 —
-  /// 출발지는 서버가 결정해서 [TmapTransitRouteDto.startLatitude/Longitude] 로
-  /// 같이 내려준다. 향후 query 로 받게 되면 시그니처 확장.)
-  Future<TmapTransitRouteDto> getRoute(int eventId) async {
+  /// 백엔드는 사용자 현재 위치([userLat], [userLng])를 출발지로 받아야 하므로
+  /// 둘 다 필수.
+  Future<TmapTransitRouteDto> getRoute({
+    required int eventId,
+    required double userLat,
+    required double userLng,
+  }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/ticket-events/$eventId/tmap-transit-route',
+      queryParameters: {
+        'userLat': userLat,
+        'userLng': userLng,
+      },
     );
     return TmapTransitRouteDto.fromJson(response.data!);
   }

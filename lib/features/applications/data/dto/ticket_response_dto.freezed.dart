@@ -228,10 +228,11 @@ mixin _$TicketResponseDto {
   String get status => throw _privateConstructorUsedError;
   String? get paidAt => throw _privateConstructorUsedError;
   int? get eventId =>
-      throw _privateConstructorUsedError; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+      throw _privateConstructorUsedError; // 지도 페이지 / Tmap 경로에 사용
   String get eventTitle => throw _privateConstructorUsedError;
   String get venueName => throw _privateConstructorUsedError;
   String? get venueAddress => throw _privateConstructorUsedError;
+  String? get thumbnailUrl => throw _privateConstructorUsedError;
   double? get destinationLatitude => throw _privateConstructorUsedError;
   double? get destinationLongitude => throw _privateConstructorUsedError;
   String get startTime => throw _privateConstructorUsedError;
@@ -265,6 +266,7 @@ abstract class $TicketResponseDtoCopyWith<$Res> {
     String eventTitle,
     String venueName,
     String? venueAddress,
+    String? thumbnailUrl,
     double? destinationLatitude,
     double? destinationLongitude,
     String startTime,
@@ -297,6 +299,7 @@ class _$TicketResponseDtoCopyWithImpl<$Res, $Val extends TicketResponseDto>
     Object? eventTitle = null,
     Object? venueName = null,
     Object? venueAddress = freezed,
+    Object? thumbnailUrl = freezed,
     Object? destinationLatitude = freezed,
     Object? destinationLongitude = freezed,
     Object? startTime = null,
@@ -337,6 +340,10 @@ class _$TicketResponseDtoCopyWithImpl<$Res, $Val extends TicketResponseDto>
             venueAddress: freezed == venueAddress
                 ? _value.venueAddress
                 : venueAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            thumbnailUrl: freezed == thumbnailUrl
+                ? _value.thumbnailUrl
+                : thumbnailUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
             destinationLatitude: freezed == destinationLatitude
                 ? _value.destinationLatitude
@@ -386,6 +393,7 @@ abstract class _$$TicketResponseDtoImplCopyWith<$Res>
     String eventTitle,
     String venueName,
     String? venueAddress,
+    String? thumbnailUrl,
     double? destinationLatitude,
     double? destinationLongitude,
     String startTime,
@@ -417,6 +425,7 @@ class __$$TicketResponseDtoImplCopyWithImpl<$Res>
     Object? eventTitle = null,
     Object? venueName = null,
     Object? venueAddress = freezed,
+    Object? thumbnailUrl = freezed,
     Object? destinationLatitude = freezed,
     Object? destinationLongitude = freezed,
     Object? startTime = null,
@@ -457,6 +466,10 @@ class __$$TicketResponseDtoImplCopyWithImpl<$Res>
         venueAddress: freezed == venueAddress
             ? _value.venueAddress
             : venueAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        thumbnailUrl: freezed == thumbnailUrl
+            ? _value.thumbnailUrl
+            : thumbnailUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
         destinationLatitude: freezed == destinationLatitude
             ? _value.destinationLatitude
@@ -499,6 +512,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
     required this.eventTitle,
     required this.venueName,
     this.venueAddress,
+    this.thumbnailUrl,
     this.destinationLatitude,
     this.destinationLongitude,
     required this.startTime,
@@ -520,13 +534,15 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
   final String? paidAt;
   @override
   final int? eventId;
-  // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+  // 지도 페이지 / Tmap 경로에 사용
   @override
   final String eventTitle;
   @override
   final String venueName;
   @override
   final String? venueAddress;
+  @override
+  final String? thumbnailUrl;
   @override
   final double? destinationLatitude;
   @override
@@ -548,7 +564,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
 
   @override
   String toString() {
-    return 'TicketResponseDto(applicationId: $applicationId, applicationCode: $applicationCode, status: $status, paidAt: $paidAt, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, venueAddress: $venueAddress, destinationLatitude: $destinationLatitude, destinationLongitude: $destinationLongitude, startTime: $startTime, assignedZoneName: $assignedZoneName, zonePrice: $zonePrice, seats: $seats)';
+    return 'TicketResponseDto(applicationId: $applicationId, applicationCode: $applicationCode, status: $status, paidAt: $paidAt, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, venueAddress: $venueAddress, thumbnailUrl: $thumbnailUrl, destinationLatitude: $destinationLatitude, destinationLongitude: $destinationLongitude, startTime: $startTime, assignedZoneName: $assignedZoneName, zonePrice: $zonePrice, seats: $seats)';
   }
 
   @override
@@ -569,6 +585,8 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
                 other.venueName == venueName) &&
             (identical(other.venueAddress, venueAddress) ||
                 other.venueAddress == venueAddress) &&
+            (identical(other.thumbnailUrl, thumbnailUrl) ||
+                other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.destinationLatitude, destinationLatitude) ||
                 other.destinationLatitude == destinationLatitude) &&
             (identical(other.destinationLongitude, destinationLongitude) ||
@@ -594,6 +612,7 @@ class _$TicketResponseDtoImpl implements _TicketResponseDto {
     eventTitle,
     venueName,
     venueAddress,
+    thumbnailUrl,
     destinationLatitude,
     destinationLongitude,
     startTime,
@@ -629,6 +648,7 @@ abstract class _TicketResponseDto implements TicketResponseDto {
     required final String eventTitle,
     required final String venueName,
     final String? venueAddress,
+    final String? thumbnailUrl,
     final double? destinationLatitude,
     final double? destinationLongitude,
     required final String startTime,
@@ -649,13 +669,15 @@ abstract class _TicketResponseDto implements TicketResponseDto {
   @override
   String? get paidAt;
   @override
-  int? get eventId; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+  int? get eventId; // 지도 페이지 / Tmap 경로에 사용
   @override
   String get eventTitle;
   @override
   String get venueName;
   @override
   String? get venueAddress;
+  @override
+  String? get thumbnailUrl;
   @override
   double? get destinationLatitude;
   @override

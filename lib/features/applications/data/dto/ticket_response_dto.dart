@@ -26,10 +26,11 @@ class TicketResponseDto with _$TicketResponseDto {
     required String applicationCode,
     required String status,
     String? paidAt,
-    int? eventId, // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+    int? eventId, // 지도 페이지 / Tmap 경로에 사용
     required String eventTitle,
     required String venueName,
     String? venueAddress,
+    String? thumbnailUrl,
     double? destinationLatitude,
     double? destinationLongitude,
     required String startTime,

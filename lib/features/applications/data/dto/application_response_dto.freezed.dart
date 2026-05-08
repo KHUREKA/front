@@ -34,9 +34,10 @@ mixin _$ApplicationResponseDto {
   String? get paidAt => throw _privateConstructorUsedError;
   String? get applicationCode => throw _privateConstructorUsedError;
   int? get eventId =>
-      throw _privateConstructorUsedError; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+      throw _privateConstructorUsedError; // 지도 페이지 / Tmap 경로에 사용
   String get eventTitle => throw _privateConstructorUsedError;
   String get venueName => throw _privateConstructorUsedError;
+  String? get thumbnailUrl => throw _privateConstructorUsedError;
   String get startTime =>
       throw _privateConstructorUsedError; // ISO LocalDateTime
   String get lotteryAt =>
@@ -76,6 +77,7 @@ abstract class $ApplicationResponseDtoCopyWith<$Res> {
     int? eventId,
     String eventTitle,
     String venueName,
+    String? thumbnailUrl,
     String startTime,
     String lotteryAt,
     String? priority1ZoneName,
@@ -115,6 +117,7 @@ class _$ApplicationResponseDtoCopyWithImpl<
     Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
+    Object? thumbnailUrl = freezed,
     Object? startTime = null,
     Object? lotteryAt = null,
     Object? priority1ZoneName = freezed,
@@ -169,6 +172,10 @@ class _$ApplicationResponseDtoCopyWithImpl<
                 ? _value.venueName
                 : venueName // ignore: cast_nullable_to_non_nullable
                       as String,
+            thumbnailUrl: freezed == thumbnailUrl
+                ? _value.thumbnailUrl
+                : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
             startTime: null == startTime
                 ? _value.startTime
                 : startTime // ignore: cast_nullable_to_non_nullable
@@ -224,6 +231,7 @@ abstract class _$$ApplicationResponseDtoImplCopyWith<$Res>
     int? eventId,
     String eventTitle,
     String venueName,
+    String? thumbnailUrl,
     String startTime,
     String lotteryAt,
     String? priority1ZoneName,
@@ -260,6 +268,7 @@ class __$$ApplicationResponseDtoImplCopyWithImpl<$Res>
     Object? eventId = freezed,
     Object? eventTitle = null,
     Object? venueName = null,
+    Object? thumbnailUrl = freezed,
     Object? startTime = null,
     Object? lotteryAt = null,
     Object? priority1ZoneName = freezed,
@@ -314,6 +323,10 @@ class __$$ApplicationResponseDtoImplCopyWithImpl<$Res>
             ? _value.venueName
             : venueName // ignore: cast_nullable_to_non_nullable
                   as String,
+        thumbnailUrl: freezed == thumbnailUrl
+            ? _value.thumbnailUrl
+            : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
         startTime: null == startTime
             ? _value.startTime
             : startTime // ignore: cast_nullable_to_non_nullable
@@ -362,6 +375,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
     this.eventId,
     required this.eventTitle,
     required this.venueName,
+    this.thumbnailUrl,
     required this.startTime,
     required this.lotteryAt,
     this.priority1ZoneName,
@@ -394,11 +408,13 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
   final String? applicationCode;
   @override
   final int? eventId;
-  // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+  // 지도 페이지 / Tmap 경로에 사용
   @override
   final String eventTitle;
   @override
   final String venueName;
+  @override
+  final String? thumbnailUrl;
   @override
   final String startTime;
   // ISO LocalDateTime
@@ -418,7 +434,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
 
   @override
   String toString() {
-    return 'ApplicationResponseDto(id: $id, status: $status, requestedSeatCount: $requestedSeatCount, autoAssign: $autoAssign, appliedAt: $appliedAt, lotteryResultAt: $lotteryResultAt, paidAt: $paidAt, applicationCode: $applicationCode, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, startTime: $startTime, lotteryAt: $lotteryAt, priority1ZoneName: $priority1ZoneName, priority2ZoneName: $priority2ZoneName, priority3ZoneName: $priority3ZoneName, assignedZoneName: $assignedZoneName, mockPaymentStatus: $mockPaymentStatus)';
+    return 'ApplicationResponseDto(id: $id, status: $status, requestedSeatCount: $requestedSeatCount, autoAssign: $autoAssign, appliedAt: $appliedAt, lotteryResultAt: $lotteryResultAt, paidAt: $paidAt, applicationCode: $applicationCode, eventId: $eventId, eventTitle: $eventTitle, venueName: $venueName, thumbnailUrl: $thumbnailUrl, startTime: $startTime, lotteryAt: $lotteryAt, priority1ZoneName: $priority1ZoneName, priority2ZoneName: $priority2ZoneName, priority3ZoneName: $priority3ZoneName, assignedZoneName: $assignedZoneName, mockPaymentStatus: $mockPaymentStatus)';
   }
 
   @override
@@ -444,6 +460,8 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
                 other.eventTitle == eventTitle) &&
             (identical(other.venueName, venueName) ||
                 other.venueName == venueName) &&
+            (identical(other.thumbnailUrl, thumbnailUrl) ||
+                other.thumbnailUrl == thumbnailUrl) &&
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.lotteryAt, lotteryAt) ||
@@ -462,7 +480,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     id,
     status,
@@ -475,6 +493,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
     eventId,
     eventTitle,
     venueName,
+    thumbnailUrl,
     startTime,
     lotteryAt,
     priority1ZoneName,
@@ -482,7 +501,7 @@ class _$ApplicationResponseDtoImpl implements _ApplicationResponseDto {
     priority3ZoneName,
     assignedZoneName,
     mockPaymentStatus,
-  );
+  ]);
 
   /// Create a copy of ApplicationResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -515,6 +534,7 @@ abstract class _ApplicationResponseDto implements ApplicationResponseDto {
     final int? eventId,
     required final String eventTitle,
     required final String venueName,
+    final String? thumbnailUrl,
     required final String startTime,
     required final String lotteryAt,
     final String? priority1ZoneName,
@@ -544,11 +564,13 @@ abstract class _ApplicationResponseDto implements ApplicationResponseDto {
   @override
   String? get applicationCode;
   @override
-  int? get eventId; // 백엔드 추후 추가 예정 — 지도 페이지 이동에 사용
+  int? get eventId; // 지도 페이지 / Tmap 경로에 사용
   @override
   String get eventTitle;
   @override
   String get venueName;
+  @override
+  String? get thumbnailUrl;
   @override
   String get startTime; // ISO LocalDateTime
   @override

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -51,10 +52,23 @@ class _SignupCompleteScreenState extends ConsumerState<SignupCompleteScreen>
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    // 홈 데이터 프리로드 — 진입 즉시 캐시되도록.
+    // 홈 데이터 + 카드 이미지 프리로드 — 진입 즉시 카드가 보이도록.
     Future.microtask(() async {
       try {
-        await ref.read(homeEventsProvider.future);
+        final home = await ref.read(homeEventsProvider.future);
+        // 이미지도 미리 디코드/캐시 — cached_network_image 의 첫 호출 race 회피.
+        if (mounted) {
+          for (final e in [
+            ...home.nearbyEvents,
+            ...home.recommendedEvents,
+          ]) {
+            final url = e.thumbnailUrl;
+            if (url != null && url.isNotEmpty) {
+              // ignore: use_build_context_synchronously
+              precacheImage(CachedNetworkImageProvider(url), context);
+            }
+          }
+        }
       } catch (_) {
         // 실패해도 홈 화면이 알아서 에러 UI 를 띄우므로 그냥 진행.
       }

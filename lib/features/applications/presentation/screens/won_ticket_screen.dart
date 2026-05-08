@@ -65,26 +65,31 @@ class WonTicketScreen extends ConsumerWidget {
               ref.watch(transportInfoProvider(app.performance.id));
           return CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                child: _CelebrationHeader(
-                  onClose: () {
-                    if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go(RouteNames.lottery);
-                    }
-                  },
-                ),
-              ),
+              // 헤더와 카드를 한 sliver 안 Stack 으로 묶어 paint 순서 + clip 회피.
+              // 카드는 헤더 바닥에서 28px 위로 올라와 살짝 겹친다.
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                  child: Transform.translate(
-                    offset: const Offset(0, -28),
-                    child: _TicketCard(
-                      application: app,
-                      formatDateTime: _formatDateTime,
-                    ),
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Stack(
+                    children: [
+                      _CelebrationHeader(
+                        onClose: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(RouteNames.lottery);
+                          }
+                        },
+                      ),
+                      // header height(240) - overlap(28) = 212
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 212, 20, 0),
+                        child: _TicketCard(
+                          application: app,
+                          formatDateTime: _formatDateTime,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

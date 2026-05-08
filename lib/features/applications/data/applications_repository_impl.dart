@@ -1,4 +1,7 @@
+import 'dart:developer' as developer;
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../core/location/location_service.dart';
 import '../../../core/maps/kakao_map_links.dart';
@@ -156,17 +159,40 @@ class ApplicationsRepositoryImpl implements ApplicationsRepository {
       userLng: loc?.longitude,
     );
 
-    // 응답에 eventId 가 들어있으면 (백엔드가 추가한 후) Tmap 대중교통 경로도 같이 가져옴.
-    // 실패해도 카카오 URL 폴백은 유지되도록 try/catch.
+    // 응답에 eventId + 사용자 위치 둘 다 있어야 Tmap 호출 가능.
+    // (백엔드가 userLat/userLng 필수 query 로 요구.)
     TmapTransitRouteSummary? tmap;
     final eventId = ticket.eventId;
-    if (eventId != null && eventId > 0) {
+    if (eventId != null && eventId > 0 && loc != null) {
       try {
-        final dto = await tmapRouteService.getRoute(eventId);
+        final dto = await tmapRouteService.getRoute(
+          eventId: eventId,
+          userLat: loc.latitude,
+          userLng: loc.longitude,
+        );
         tmap = _toSummary(dto);
-      } catch (_) {
+        if (kDebugMode) {
+          developer.log(
+            'tmap fetched: total=${dto.totalTime}분, segments=${dto.segments.length}',
+            name: 'TransportInfo',
+          );
+        }
+      } catch (e, st) {
+        if (kDebugMode) {
+          developer.log(
+            'tmap fetch FAILED: $e',
+            name: 'TransportInfo',
+            error: e,
+            stackTrace: st,
+          );
+        }
         // 조용히 폴백 — 카카오 링크와 주소는 그대로 노출됨.
       }
+    } else if (kDebugMode) {
+      developer.log(
+        'tmap skipped: eventId=$eventId, location=${loc != null ? "ok" : "null"}',
+        name: 'TransportInfo',
+      );
     }
 
     return TransportInfo(
@@ -226,10 +252,12 @@ class ApplicationsRepositoryImpl implements ApplicationsRepository {
     final lotteryDate = _parseIso(app.lotteryAt);
     final status = _mapStatusStatic(app.status, startDate);
 
+    // 썸네일은 ticket(/me/tickets) 우선, 없으면 application(/me) — 둘 다 thumbnailUrl 제공.
+    final thumbnail = ticket?.thumbnailUrl ?? app.thumbnailUrl ?? '';
     final performance = Performance(
       id: 'app-${app.id}',
       title: app.eventTitle,
-      posterImageUrl: '',
+      posterImageUrl: thumbnail,
       venue: app.venueName,
       startDate: startDate,
       endDate: startDate,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../mypage/presentation/providers/profile_provider.dart';
+import '../providers/home_provider.dart';
 import '../widgets/hero_discovery_card.dart';
 import '../widgets/nearby_performance_list.dart';
 import '../widgets/recommended_performance_list.dart';
@@ -31,6 +33,20 @@ class HomeScreen extends ConsumerWidget {
       data: (p) => p.name.isNotEmpty ? p.name : (user?.name ?? '회원'),
       orElse: () => user?.name ?? '회원',
     );
+
+    // 홈 카드 이미지를 미리 디코드/캐시 — 첫 진입 시 cached_network_image
+    // 의 race로 빈 이미지가 보이는 문제 회피. 데이터가 도착할 때마다
+    // 카드가 그려지기 전에 thumbnail 들을 워밍업한다.
+    ref.listen(homeEventsProvider, (_, next) {
+      next.whenData((data) {
+        for (final e in [...data.nearbyEvents, ...data.recommendedEvents]) {
+          final url = e.thumbnailUrl;
+          if (url != null && url.isNotEmpty) {
+            precacheImage(CachedNetworkImageProvider(url), context);
+          }
+        }
+      });
+    });
 
     return SafeArea(
       bottom: false,

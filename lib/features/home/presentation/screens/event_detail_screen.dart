@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/router/route_names.dart';
+import '../../../../core/location/location_service.dart';
 import '../../../../core/maps/kakao_map_links.dart';
 import '../../../../core/maps/tmap_route_service.dart';
 import '../../../../core/maps/tmap_transit_route_dto.dart';
@@ -615,7 +616,21 @@ class _TransitSectionState extends ConsumerState<_TransitSection> {
   @override
   void initState() {
     super.initState();
-    _future = ref.read(tmapRouteServiceProvider).getRoute(widget.eventId);
+    _future = _fetch();
+  }
+
+  Future<TmapTransitRouteDto> _fetch() async {
+    // 백엔드가 userLat/userLng 를 필수로 요구하므로 위치를 먼저 받는다.
+    // 실패하면 throw — FutureBuilder 가 그냥 섹션을 숨김.
+    final loc = await ref.read(locationServiceProvider).getCurrentLocation();
+    if (loc == null) {
+      throw Exception('no_location');
+    }
+    return ref.read(tmapRouteServiceProvider).getRoute(
+          eventId: widget.eventId,
+          userLat: loc.latitude,
+          userLng: loc.longitude,
+        );
   }
 
   @override
