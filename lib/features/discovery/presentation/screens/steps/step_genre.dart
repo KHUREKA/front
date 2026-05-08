@@ -36,7 +36,7 @@ class _StepGenreState extends ConsumerState<StepGenre>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 3000),
     );
     if (widget.isActive) _ctrl.forward();
   }

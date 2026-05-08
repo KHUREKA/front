@@ -39,7 +39,7 @@ class _StepKeywordState extends ConsumerState<StepKeyword>
     _controller = TextEditingController(text: initial);
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 3000),
     );
     if (widget.isActive) _ctrl.forward();
   }
@@ -93,59 +93,60 @@ class _StepKeywordState extends ConsumerState<StepKeyword>
             child: SizedBox(
               height: 64,
               child: TextField(
-              controller: _controller,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _commitAndNext(),
-              style: const TextStyle(
-                fontFamily: 'Pretendard',
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-                height: 1.4,
-              ),
-              decoration: InputDecoration(
-                hintText: '입력해주세요 (선택)',
-                hintStyle: const TextStyle(
+                controller: _controller,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _commitAndNext(),
+                style: const TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textTertiary,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
                   height: 1.4,
                 ),
-                filled: true,
-                fillColor: AppColors.surface,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 2,
+                decoration: InputDecoration(
+                  hintText: '입력해주세요 (선택)',
+                  hintStyle: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textTertiary,
+                    height: 1.4,
                   ),
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('음성 입력은 준비 중이에요.'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.mic_rounded,
-                    size: 28,
-                    color: AppColors.textSecondary,
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('음성 입력은 준비 중이에요.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.mic_rounded,
+                      size: 28,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ),

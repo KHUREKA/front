@@ -43,8 +43,10 @@ class DiscoveryResultScreen extends ConsumerWidget {
               context.go(RouteNames.discovery);
             },
             onClose: () => context.go(RouteNames.home),
+            // 카드 본문 탭 → 홈 카드와 동일하게 공연 상세 화면.
             onTapPerformance: (p) =>
-                _showPlaceholder(context, '"${p.title}" 상세 화면'),
+                context.push(RouteNames.eventDetailFor(p.id)),
+            // "예매하기" 버튼은 좌석 흐름으로 바로.
             onBookPerformance: (p) =>
                 context.push(RouteNames.seatFor(p.id)),
           ),
@@ -53,15 +55,6 @@ class DiscoveryResultScreen extends ConsumerWidget {
     );
   }
 
-  static void _showPlaceholder(BuildContext context, String label) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label 은 다음 단계에 만들 거예요'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
 }
 
 class _ResultBody extends StatelessWidget {
@@ -129,8 +122,8 @@ class _ResultBody extends StatelessWidget {
                       final p = list[i];
                       return AnimationConfiguration.staggeredList(
                         position: i,
-                        duration: const Duration(milliseconds: 400),
-                        delay: const Duration(milliseconds: 100),
+                        duration: const Duration(milliseconds: 2000),
+                        delay: const Duration(milliseconds: 250),
                         child: SlideAnimation(
                           verticalOffset: 40.0,
                           curve: Curves.easeOutCubic,

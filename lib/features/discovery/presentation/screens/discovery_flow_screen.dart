@@ -173,18 +173,28 @@ class _DiscoveryFlowScreenState extends ConsumerState<DiscoveryFlowScreen> {
                 ),
               ),
 
-              // PageView
+              // PageView — 각 step 에 isActive 를 전달해 등장 시점에만 cascade 재생.
               Expanded(
                 child: PageView(
                   controller: _pageController,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     SingleChildScrollView(
-                      child: StepGenre(onNext: _next),
+                      child: StepGenre(
+                        onNext: _next,
+                        isActive: _currentStep == 0,
+                      ),
                     ),
-                    StepKeyword(onNext: _next, onSkip: _next),
+                    StepKeyword(
+                      onNext: _next,
+                      onSkip: _next,
+                      isActive: _currentStep == 1,
+                    ),
                     SingleChildScrollView(
-                      child: StepWhen(onComplete: _completeFlow),
+                      child: StepWhen(
+                        onComplete: _completeFlow,
+                        isActive: _currentStep == 2,
+                      ),
                     ),
                   ],
                 ),

@@ -60,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        '안녕하세요, $greetingName님 👋',
+                        '안녕하세요, $greetingName님!',
                         style: const TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 24,

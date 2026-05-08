@@ -171,18 +171,11 @@ class _Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 88,
-          height: 88,
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            '🎫',
-            style: TextStyle(fontSize: 48, height: 1),
-          ),
+        Image.asset(
+          'assets/images/aiIMG.png',
+          width: 120,
+          height: 120,
+          fit: BoxFit.contain,
         ),
       ],
     );

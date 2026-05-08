@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/widgets/friendly_error_view.dart';
 import '../../domain/seat_preference.dart';
 import '../../domain/section.dart';
@@ -166,7 +165,7 @@ class _Body extends StatelessWidget {
 
     return Column(
       children: [
-        // 상단 바
+        // 상단 바 — 진행 표시는 카드 위 오버레이로 이동, 여기엔 뒤로/AI만 둠.
         Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
           child: Row(
@@ -179,15 +178,7 @@ class _Body extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              Expanded(
-                child: Text(
-                  '${currentIndex + 1} / ${sections.length} 구역 보는 중',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
+              const Spacer(),
               AiSuggestButton(onConfirm: onAiTap),
             ],
           ),
@@ -203,6 +194,21 @@ class _Body extends StatelessWidget {
                 onPageChanged: onPageChanged,
                 onAddToRank: onAddToRank,
                 rankedIds: rankedIds,
+              ),
+
+              // 카드 위 중앙 상단 — 진행 표시 알약
+              Positioned(
+                top: 12,
+                left: 0,
+                right: 0,
+                child: IgnorePointer(
+                  child: Center(
+                    child: _ProgressPill(
+                      current: currentIndex + 1,
+                      total: sections.length,
+                    ),
+                  ),
+                ),
               ),
 
               // ◀ 이전 (좌측)
@@ -289,6 +295,43 @@ class _Body extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 카드 위 중앙 상단 — "N / N 구역 보는 중" 알약 인디케이터.
+class _ProgressPill extends StatelessWidget {
+  const _ProgressPill({required this.current, required this.total});
+
+  final int current;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.event_seat_rounded,
+              size: 14, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            '$current / $total 구역 보는 중',
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
